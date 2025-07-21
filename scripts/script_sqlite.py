@@ -1,3 +1,5 @@
+import sqlite3
+
 sqlite_path = "./data/base_stock.sqlite"
 conn = sqlite3.connect(sqlite_path)
 cur = conn.cursor()

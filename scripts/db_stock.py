@@ -15,30 +15,26 @@ def extract_csv(commande_path):
     # Ticket no.1
 
 
-def extract_sqlite(db_path):
+import sqlite3
+import pandas as pd
+import os
+
+
+def sqlite_to_csv(db_path, output_dir="./output_csv"):
     conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
-
-    # Récupérer toutes les tables
-    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = cur.fetchall()
-
-    base_donnees = {}
-
-    for table_name in tables:
-        table = table_name[0]
-        cur.execute(f"SELECT * FROM {table}")
-        lignes = cur.fetchall()
-        colonnes = [desc[0] for desc in cur.description]
-
-        # Transformer chaque ligne en dictionnaire
-        lignes_dict = [dict(zip(colonnes, ligne)) for ligne in lignes]
-
-        # Ajouter au dictionnaire général
-        base_donnees[table] = lignes_dict
-
+    os.makedirs(output_dir, exist_ok=True)
+    query = "SELECT name FROM sqlite_master WHERE type='table';"
+    tables = pd.read_sql_query(query, conn)
+    fichiers_crees = []
+    for table_name in tables["name"]:
+        df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
+        csv_path = os.path.join(output_dir, f"{table_name}.csv")
+        df.to_csv(csv_path, index=False)
+        print(f"✅ Table '{table_name}' exportée vers {csv_path}")
+        fichiers_crees.append(csv_path)
     conn.close()
-    return base_donnees
+    return fichiers_crees
+
 
 def transform_csv(data_csv):
 
@@ -63,14 +59,14 @@ def transform_csv(data_csv):
         champs_manquants = [
             champ for champ in champs_obligatoires if pd.isnull(ligne.get(champ))
         ]
-    # On crée une liste champs_manquants avec tous les noms de colonnes qui sont manquants dans cette ligne.
-    # Si la ligne est incomplète (il manque des champs) :
-    # On ajoute un dictionnaire dans erreurs qui contient :
-    # ligne: le numéro réel de la ligne dans le fichier CSV (on ajoute +2 car :
-    # Python commence à 0
-    # Et la première ligne est l’en-tête)
-    # champs_manquants: liste des champs manquants
-    # données: les données complètes de cette ligne
+        # On crée une liste champs_manquants avec tous les noms de colonnes qui sont manquants dans cette ligne.
+        # Si la ligne est incomplète (il manque des champs) :
+        # On ajoute un dictionnaire dans erreurs qui contient :
+        # ligne: le numéro réel de la ligne dans le fichier CSV (on ajoute +2 car :
+        # Python commence à 0
+        # Et la première ligne est l’en-tête)
+        # champs_manquants: liste des champs manquants
+        # données: les données complètes de cette ligne
 
         if champs_manquants:
             erreurs.append(
@@ -90,11 +86,15 @@ def transform_csv(data_csv):
         print("✅ Toutes les lignes sont valides.")
 
 
-
 def main():
     data_csv = extract_csv("./data/commande_revendeur_tech_express.csv")
-    data_sqlite = extract_sqlite("./data/base_stock.sqlite")
-    print(data_csv)
-    transform_csv(data_csv)
+    data_sqlite = sqlite_to_csv("./data/base_stock.sqlite")
+    print(data_sqlite)
+
+    # transform_csv(data_csv)
+    for i in range(0, len(data_sqlite) - 1):
+        data = extract_csv(data_sqlite[i])
+        transform_csv(data)
+
 
 main()
