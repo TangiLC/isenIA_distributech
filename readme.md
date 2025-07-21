@@ -110,7 +110,7 @@ numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_pr
 
 ```
 etl-revendeurs/
-├── etl.py                   # Script principal du pipeline
+├── etl.py                   # Script principal du pipeline (main)
 ├── /scripts/
 │   ├── extracts.py          # Scripts pour l'étape Extract
 │   ├── transforms.py        # Scripts pour l'étape Transform
@@ -121,7 +121,7 @@ etl-revendeurs/
 │   ├── commandes_X.csv      # Commandes hebdo (source CSV)
 │   └── stocks.sqlite        # Base SQLite (stock de départ)
 ├── /sql/
-│   └── schema.sql           # Script de création des tables
+│   └── schema.sql           # Script de création des tables pour mySQL
 ├── requirements.txt         # Dépendances Python
 ├── README.md                # Ce fichier 😄
 └── .gitignore               # Liste des répertoires ou fichiers non suivis
@@ -141,7 +141,7 @@ etl-revendeurs/
 
 ## ✅ Livrables attendus
 
-- Scripts Python du pipeline ETL (`etl.py`) et annexes
+- Scripts Python du pipeline ETL (`etl.py`) et annexes (`/scripts/`)
 - Fichier SQL (`schema.sql`) pour initialiser la base
 - Fichier `.csv` généré de l’état des stocks à date
 - Documentation fonctionnelle (ce `README.md`)
@@ -151,7 +151,7 @@ etl-revendeurs/
 ## 📌 À venir
 
 - Factorisation et sécurisation
-- try/except affiné
+- try/except affinés
 - Tests de robustesse sur les étapes `Transform`
 
 ---
