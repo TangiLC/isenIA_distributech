@@ -51,11 +51,15 @@ cd etl
 
 Ce projet est réalisé en trinôme, les contributeurs sont :
 
-*Carole* https://github.com/Carole-N
-
-*Gosia* https://github.com/go2375
-
-*Tangi* https://github.com/TangiLC
+*Carole* <a href="https://github.com/Carole-N" target="_blank">
+  <img src="https://avatars.githubusercontent.com/Carole-N" width="50" height="50" style="border-radius: 50%;" alt="CaroleN" />
+</a>
+*Gosia* <a href="https://github.com/go2375" target="_blank">
+  <img src="https://avatars.githubusercontent.com/go2375" width="50" height="50" style="border-radius: 50%;" alt="Gosia" />
+</a>
+*Tangi* <a href="https://github.com/TangiLC" target="_blank">
+  <img src="https://avatars.githubusercontent.com/TangiLC" width="50" height="50" style="border-radius: 50%;" alt="TangiLC" />
+</a>
 
 
 ### 3. Création de l’environnement virtuel Python
