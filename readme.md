@@ -50,8 +50,11 @@ cd etl
 ```
 
 Ce projet est réalisé en trinôme, les contributeurs sont :
+
 *Carole* https://github.com/Carole-N
+
 *Gosia* https://github.com/go2375
+
 *Tangi* https://github.com/TangiLC
 
 
