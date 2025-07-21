@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql
+    container_name: db_dt
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
+    ports:
+      - 3307:3306
+    volumes:
+      - ./db:/var/lib/mysql
+    restart: always
+
+  adminer:
+    image: adminer
+    container_name: adminer_dt
+    restart: always
+    ports:
+      - 8081:8080
