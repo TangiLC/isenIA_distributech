@@ -14,6 +14,32 @@ def extract_csv(commande_path):
     # Ajout fin#
     # Ticket no.1
 
+
+def extract_sqlite(db_path):
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+
+    # Récupérer toutes les tables
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cur.fetchall()
+
+    base_donnees = {}
+
+    for table_name in tables:
+        table = table_name[0]
+        cur.execute(f"SELECT * FROM {table}")
+        lignes = cur.fetchall()
+        colonnes = [desc[0] for desc in cur.description]
+
+        # Transformer chaque ligne en dictionnaire
+        lignes_dict = [dict(zip(colonnes, ligne)) for ligne in lignes]
+
+        # Ajouter au dictionnaire général
+        base_donnees[table] = lignes_dict
+
+    conn.close()
+    return base_donnees
+
     # Je définis les champs obligatoires en prenant les noms de colonnes comme champs obligatoires :
     # df.columns : récupère tous les noms de colonnes dans le fichier CSV (la ligne d'en-tête)
     # .tolist() : transforme ça en liste Python.
@@ -63,4 +89,9 @@ def extract_csv(commande_path):
 
 
 def main():
-    extract_csv("./data/commande_revendeur_tech_express.csv")
+    data_csv = extract_csv("./data/commande_revendeur_tech_express.csv")
+    data_sqlite = extract_sqlite("./data/base_stock.sqlite")
+    print(data_sqlite)
+
+
+main()
