@@ -40,21 +40,23 @@ def extract_sqlite(db_path):
     conn.close()
     return base_donnees
 
+def transform_csv(data_csv):
+
     # Je définis les champs obligatoires en prenant les noms de colonnes comme champs obligatoires :
-    # df.columns : récupère tous les noms de colonnes dans le fichier CSV (la ligne d'en-tête)
+    # data_csv.columns : récupère tous les noms de colonnes dans le fichier CSV (la ligne d'en-tête)
     # .tolist() : transforme ça en liste Python.
 
-    champs_obligatoires = df.columns.tolist()
+    champs_obligatoires = data_csv.columns.tolist()
     print(champs_obligatoires)
     # Je prépare une liste vide pour y stocker les lignes qui posent problème.
     erreurs = []
 
     # Je vérifie ligne par ligne notre csv:
-    # df.iterrows() permet de parcourir chaque ligne du CSV une par une.
+    # data_csv.iterrows() permet de parcourir chaque ligne du CSV une par une.
     # index = numéro de la ligne (commence à 0)
     # ligne = données de cette ligne, sous forme de dictionnaire
 
-    for index, ligne in df.iterrows():
+    for index, ligne in data_csv.iterrows():
         # Pour chaque champ obligatoire, on regarde :
         # Est-ce que la cellule correspondante dans cette ligne est vide (NaN) ?
         # pd.isnull(...) retourne True si la valeur est absente ou nulle.
@@ -91,7 +93,7 @@ def extract_sqlite(db_path):
 def main():
     data_csv = extract_csv("./data/commande_revendeur_tech_express.csv")
     data_sqlite = extract_sqlite("./data/base_stock.sqlite")
-    print(data_sqlite)
-
+    print(data_csv)
+    transform_csv(data_csv)
 
 main()
