@@ -1,3 +1,4 @@
 /.dtvenv
 /bdd/db
 /output_csv
+/scripts/__pycache__
