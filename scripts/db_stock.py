@@ -157,8 +157,6 @@ for index, ligne in df.iterrows():
 if erreurs:
     print("Lignes avec des champs manquants :")
     for err in erreurs:
-        print(
-            f"Ligne {err['ligne']} → Champs manquants : {', '.join(err['champs_manquants'])}"
-        )
+        print(f"Ligne {err['ligne']} → Champs manquants ")
 else:
     print("✅ Toutes les lignes sont valides.")
