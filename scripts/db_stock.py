@@ -46,6 +46,7 @@ def transform_vide_csv(data_csv):
     print(champs_obligatoires)
     # Je prépare une liste vide pour y stocker les lignes qui posent problème.
     erreurs = []
+    lignes_valides = []
 
     # Je vérifie ligne par ligne notre csv:
     # data_csv.iterrows() permet de parcourir chaque ligne du CSV une par une.
@@ -76,6 +77,9 @@ def transform_vide_csv(data_csv):
                     "données": ligne.to_dict(),
                 }
             )
+        else: 
+            lignes_valides.append(ligne)
+            
 
     # Afficher les erreurs à l'écran : à vérifier plus tard comment le rendre plus précis
     if erreurs:
@@ -84,19 +88,23 @@ def transform_vide_csv(data_csv):
             print(f"Ligne {err['ligne']} → Champs manquants ")
     else:
         print("✅ Toutes les lignes sont valides.")
+    # On crée un nouveau fichier avec uniquement les lignes valides.
+    df_valide = pd.DataFrame(lignes_valides)
 
+    return df_valide
 
 def main():
     commande_csv_brut = extract_csv("./data/commande_revendeur_tech_express.csv")
     data_sqlite_brut = sqlite_to_csv("./data/base_stock.sqlite")
 
-    # effectuer la première transformation (données manquantes/vides) sur le fichier csv commandes
-    transform_vide_csv(commande_csv_brut)
+    # effectuer la première transformation (données manquantes/vides) sur le fichier csv commandes et on attribue un fichier avec des commandes valides
+    commande_valide = transform_vide_csv(commande_csv_brut)
 
+    sqlite_valide = []
     for i in range(0, len(data_sqlite_brut) - 1):
         data = extract_csv(data_sqlite_brut[i])
-        # effectuer la première transformation (données manquantes/vides) sur les fichier csv sqlite
-        transform_vide_csv(data)
-
+        # effectuer la première transformation (données manquantes/vides) sur les fichier csv sqlite et on attribue des fichiers mémoires aux tables sqlite
+        sqlite_valide.append(transform_vide_csv(data))
+    
 
 main()
