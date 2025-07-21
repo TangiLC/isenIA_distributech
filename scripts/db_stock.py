@@ -93,6 +93,7 @@ def transform_vide_csv(data_csv):
 
     return df_valide
 
+# L'idée Tangi pour plus tard: regrouper commande dans la même liste que les tables sqlite
 def main():
     commande_csv_brut = extract_csv("./data/commande_revendeur_tech_express.csv")
     data_sqlite_brut = sqlite_to_csv("./data/base_stock.sqlite")
