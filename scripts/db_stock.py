@@ -28,7 +28,7 @@ def sqlite_to_csv(db_path, output_dir="./output_csv"):
     fichiers_crees = []
     for table_name in tables["name"]:
         df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
-        csv_path = os.path.join(output_dir, f"{table_name}.csv")
+        csv_path = os.path.join(output_dir, f"{table_name}_brut.csv")
         df.to_csv(csv_path, index=False)
         print(f"✅ Table '{table_name}' exportée vers {csv_path}")
         fichiers_crees.append(csv_path)
@@ -36,7 +36,7 @@ def sqlite_to_csv(db_path, output_dir="./output_csv"):
     return fichiers_crees
 
 
-def transform_csv(data_csv):
+def transform_vide_csv(data_csv):
 
     # Je définis les champs obligatoires en prenant les noms de colonnes comme champs obligatoires :
     # data_csv.columns : récupère tous les noms de colonnes dans le fichier CSV (la ligne d'en-tête)
@@ -87,14 +87,16 @@ def transform_csv(data_csv):
 
 
 def main():
-    data_csv = extract_csv("./data/commande_revendeur_tech_express.csv")
-    data_sqlite = sqlite_to_csv("./data/base_stock.sqlite")
-    print(data_sqlite)
+    commande_csv_brut = extract_csv("./data/commande_revendeur_tech_express.csv")
+    data_sqlite_brut = sqlite_to_csv("./data/base_stock.sqlite")
 
-    # transform_csv(data_csv)
-    for i in range(0, len(data_sqlite) - 1):
-        data = extract_csv(data_sqlite[i])
-        transform_csv(data)
+    # effectuer la première transformation (données manquantes/vides) sur le fichier csv commandes
+    transform_vide_csv(commande_csv_brut)
+
+    for i in range(0, len(data_sqlite_brut) - 1):
+        data = extract_csv(data_sqlite_brut[i])
+        # effectuer la première transformation (données manquantes/vides) sur les fichier csv sqlite
+        transform_vide_csv(data)
 
 
 main()
