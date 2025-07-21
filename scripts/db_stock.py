@@ -72,14 +72,14 @@ def transform_csv(data_csv):
     # champs_manquants: liste des champs manquants
     # données: les données complètes de cette ligne
 
-    if champs_manquants:
-        erreurs.append(
-            {
-                "ligne": index + 2,  # +2 pour tenir compte de l'en-tête (ligne 1)
-                "champs_manquants": champs_manquants,
-                "données": ligne.to_dict(),
-            }
-        )
+        if champs_manquants:
+            erreurs.append(
+                {
+                    "ligne": index + 2,  # +2 pour tenir compte de l'en-tête (ligne 1)
+                    "champs_manquants": champs_manquants,
+                    "données": ligne.to_dict(),
+                }
+            )
 
     # Afficher les erreurs à l'écran : à vérifier plus tard comment le rendre plus précis
     if erreurs:
@@ -88,6 +88,7 @@ def transform_csv(data_csv):
             print(f"Ligne {err['ligne']} → Champs manquants ")
     else:
         print("✅ Toutes les lignes sont valides.")
+
 
 
 def main():
