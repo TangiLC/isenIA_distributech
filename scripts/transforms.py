@@ -108,6 +108,8 @@ def corriger_date(date_str):
         "%m-%d-%Y",
         "%d %b %Y",
         "%d %B %Y",
+        "%Y %m %d",
+        "%Y %b %d"
     ]
 
     for fmt in formats_possibles:
