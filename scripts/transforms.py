@@ -228,3 +228,46 @@ def transform_type_df(name, data_df):
 
     # --------- Retour du DataFrame nettoyé ---------
     return pd.DataFrame(lignes_valides)
+
+#########  TRANSFORM : Nettoyage des espaces, caractères et typographies  #############################################
+# Transformation des espaces, caractères speciaux et typographies
+# Partie. 1 Nettoyer les espaces et les sauts de lignes
+def nettoyer_texte(texte):
+    if pd.isnull(texte):
+        return "*"
+    texte = str(texte)
+    texte = texte.strip()  # enlève espaces début/fin
+    texte = texte.replace("\xa0", " ")  # espace insécable -> espace normal
+    texte = texte.replace("\r", "").replace("\n", "")  # supprime saut de ligne
+    return texte
+
+# Partie. 2 Nettoyer la typographie classique (guillemets, tirets)
+def nettoyer_typographie(texte):
+    if pd.isnull(texte):
+        return "*"
+    texte = str(texte).strip()
+    
+    remplacements = {
+        "’": "'",   # apostrophe courbe vers droite
+        "“": '"',
+        "”": '"',
+        "«": '"',
+        "»": '"',
+        "–": "-",   # tiret moyen
+        "—": "-",   # tiret long
+        }
+    
+    for mauvais, bon in remplacements.items():
+        texte = texte.replace(mauvais, bon)
+    
+    return texte
+# Partie. 3 Nettoyer en supprimant accents et caractères spéciaux
+# la typographie classique (guillemets, tirets)
+import unicodedata
+
+def nettoyer_typographie_agressif(texte):
+    if pd.isnull(texte):
+        return "*"
+    texte = unicodedata.normalize('NFD', texte)  # sépare caractères + accents
+    texte = texte.encode('ascii', 'ignore').decode('utf-8')  # enlève accents
+    return texte
