@@ -78,3 +78,34 @@ def transform_data_vide_df(name, data_df):
     df_valide = pd.DataFrame(lignes_valides)
 
     return df_valide
+
+# Transformation des dates d'une dataframe
+# # Paramètre d'entrée : dataframe
+# Sortie : date corrigée
+
+
+def corriger_date(date_str):
+    """
+    Tente de corriger une chaîne représentant une date
+    vers le format standard YYYY-MM-DD.
+    Retourne '*' si la date est invalide ou non corrigeable.
+    """
+    if pd.isnull(date_str) or not isinstance(date_str, str):
+        return "*"
+
+    # Essai de plusieurs formats possibles
+    formats_possibles = [
+        "%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%d-%m-%Y", "%Y/%m/%d",
+        "%Y%m%d", "%d%m%Y", "%m-%d-%Y", "%d %b %Y", "%d %B %Y"
+    ]
+
+    for fmt in formats_possibles:
+        try:
+            dt = datetime.strptime(date_str.strip(), fmt)
+            return dt.strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+
+    return "*"
+
+    
