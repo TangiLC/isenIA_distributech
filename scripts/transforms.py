@@ -87,11 +87,7 @@ def transform_data_vide_df(name, data_df):
 
 
 def corriger_date(date_str):
-    """
-    Tente de corriger une chaîne représentant une date
-    vers le format standard YYYY-MM-DD.
-    Retourne '*' si la date est invalide ou non corrigeable.
-    """
+
     if pd.isnull(date_str) or not isinstance(date_str, str):
         print(f"❌ Entrée invalide ou nulle : {date_str}")
         return "*"
@@ -108,14 +104,14 @@ def corriger_date(date_str):
         "%m-%d-%Y",
         "%d %b %Y",
         "%d %B %Y",
-        "%Y %m %d",
-        "%Y %b %d"
     ]
 
     for fmt in formats_possibles:
         try:
             dt = datetime.strptime(date_str.strip(), fmt)
-            print(f"✅ Correction réussie : '{date_str}' avec format '{fmt}' → {dt.strftime('%Y-%m-%d')}")
+            print(
+                f"✅ Correction réussie : '{date_str}' avec format '{fmt}' → {dt.strftime('%Y-%m-%d')}"
+            )
             return dt.strftime("%Y-%m-%d")
         except ValueError:
             print(f"⛔ Format invalide pour '{date_str}' avec '{fmt}'")
@@ -123,7 +119,6 @@ def corriger_date(date_str):
 
     print(f"❌ Aucun format valide trouvé pour : {date_str}")
     return "*"
-
 
 
 #########  TRANSFORM TYPE  #############################################
@@ -189,15 +184,15 @@ def transform_type_df(name, data_df):
                 "product_name",
                 "region_name",
                 "revendeur_name",
-                "numero_commande",
+                # "numero_commande",
             ]:
                 if not any(c.isalpha() for c in val):
                     ligne_valide[champ] = "*"
                     ligne_erreurs.append(champ)
                 else:
-                    val1=nettoyer_texte(val)
-                    val2=nettoyer_typographie(val1)
-                    val3=nettoyer_typographie_aggresif(val2)
+                    val1 = nettoyer_texte(val)
+                    val2 = nettoyer_typographie(val1)
+                    val3 = nettoyer_typographie_aggressif(val2)
                     ligne_valide[champ] = val3
                 continue
 
@@ -229,6 +224,7 @@ def transform_type_df(name, data_df):
     # --------- Retour du DataFrame nettoyé ---------
     return pd.DataFrame(lignes_valides)
 
+
 #########  TRANSFORM : Nettoyage des espaces, caractères et typographies  #############################################
 # Transformation des espaces, caractères speciaux et typographies
 # Partie. 1 Nettoyer les espaces et les sauts de lignes
@@ -241,33 +237,37 @@ def nettoyer_texte(texte):
     texte = texte.replace("\r", "").replace("\n", "")  # supprime saut de ligne
     return texte
 
+
 # Partie. 2 Nettoyer la typographie classique (guillemets, tirets)
 def nettoyer_typographie(texte):
     if pd.isnull(texte):
         return "*"
     texte = str(texte).strip()
-    
+
     remplacements = {
-        "’": "'",   # apostrophe courbe vers droite
+        "’": "'",  # apostrophe courbe vers droite
         "“": '"',
         "”": '"',
         "«": '"',
         "»": '"',
-        "–": "-",   # tiret moyen
-        "—": "-",   # tiret long
-        }
-    
+        "–": "-",  # tiret moyen
+        "—": "-",  # tiret long
+    }
+
     for mauvais, bon in remplacements.items():
         texte = texte.replace(mauvais, bon)
-    
+
     return texte
+
+
 # Partie. 3 Nettoyer en supprimant accents et caractères spéciaux
 # la typographie classique (guillemets, tirets)
 import unicodedata
 
+
 def nettoyer_typographie_agressif(texte):
     if pd.isnull(texte):
         return "*"
-    texte = unicodedata.normalize('NFD', texte)  # sépare caractères + accents
-    texte = texte.encode('ascii', 'ignore').decode('utf-8')  # enlève accents
+    texte = unicodedata.normalize("NFD", texte)  # sépare caractères + accents
+    texte = texte.encode("ascii", "ignore").decode("utf-8")  # enlève accents
     return texte
