@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 
 #########  TRANSFORM ELEMENT VIDE  #############################################
@@ -79,6 +80,7 @@ def transform_data_vide_df(name, data_df):
 
     return df_valide
 
+
 # Transformation des dates d'une dataframe
 # # Paramètre d'entrée : dataframe
 # Sortie : date corrigée
@@ -95,8 +97,16 @@ def corriger_date(date_str):
 
     # Essai de plusieurs formats possibles
     formats_possibles = [
-        "%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%d-%m-%Y", "%Y/%m/%d",
-        "%Y%m%d", "%d%m%Y", "%m-%d-%Y", "%d %b %Y", "%d %B %Y"
+        "%Y-%m-%d",
+        "%d/%m/%Y",
+        "%m/%d/%Y",
+        "%d-%m-%Y",
+        "%Y/%m/%d",
+        "%Y%m%d",
+        "%d%m%Y",
+        "%m-%d-%Y",
+        "%d %b %Y",
+        "%d %B %Y",
     ]
 
     for fmt in formats_possibles:
@@ -107,5 +117,3 @@ def corriger_date(date_str):
             continue
 
     return "*"
-
-    
