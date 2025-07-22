@@ -6,7 +6,18 @@ Ce projet est un **Proof of Concept (PoC)** académique développé dans le cadr
 
 Il a pour but de concevoir un pipeline **ETL automatisé en Python**, permettant l'intégration des données de commandes revendeurs (au format CSV) et de stocks/production (via une base SQLite), dans une **base de données MySQL centralisée**. Le tout est actuellement **sans interface graphique**, en interaction terminale uniquement.
 
+Le développement de ce projet a suivi une méthodologie Agile, avec ticketing et feuille de route sur
+[Notion](https://www.notion.so/ba8a83033c684aa798eb9e7c6e2e2ed6).
+
 ---
+![Python 3.12](https://img.shields.io/badge/Python-3.12%2B-yellow?logo=python&logoColor=white)
+![Ubuntu 24](https://img.shields.io/badge/Ubuntu-24.04-E95420?logo=ubuntu&logoColor=white)
+![SQLite 3.4](https://img.shields.io/badge/SQLite-3.4-pink?logo=sqlite&logoColor=003B57)
+![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?logo=mysql&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-2.3-150458?logo=pandas&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-V27-2496ED?logo=docker&logoColor=white)
+![VSCode](https://img.shields.io/badge/VSCode-1.10-007ACC?logo=visualstudiocode&logoColor=white)
+
 
 ## 🧾 Objectif pédagogique
 
