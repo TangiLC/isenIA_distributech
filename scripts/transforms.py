@@ -193,7 +193,7 @@ def transform_type_df(name, data_df):
                 else:
                     val1 = nettoyer_texte(val)
                     val2 = nettoyer_typographie(val1)
-                    val3 = nettoyer_typographie_aggressif(val2)
+                    val3 = nettoyer_typographie_agressif(val2)
                     ligne_valide[champ] = val3
                 continue
 
