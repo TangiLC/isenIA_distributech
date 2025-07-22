@@ -150,8 +150,11 @@ def transform_type_df(name, data_df):
                 "revendeur_id",
             ]:
                 try:
-                    val_int = int(val)
-                    ligne_valide[champ] = val_int
+                    val_float = float(val)
+                    if val_float.is_integer():
+                        ligne_valide[champ] = int(val_float)
+                    else:
+                        raise ValueError("Nombre décimal détecté")
                 except:
                     ligne_valide[champ] = "*"
                     ligne_erreurs.append(champ)

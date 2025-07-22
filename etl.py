@@ -1,5 +1,5 @@
 from scripts.extracts import extract_csv_to_df, extract_sqlite_to_df
-from scripts.transforms import transform_data_vide_df
+from scripts.transforms import transform_data_vide_df, transform_type_df
 
 # COMMANDE_PATH="data/commande_revendeur_tech_express.csv"
 COMMANDE_PATH = "data/commande_avec_erreurs.csv"
@@ -23,7 +23,11 @@ def main():
         dsv = transform_data_vide_df(data[0], data[1])
         df_sans_vide.append((data[0], dsv))
 
-    # print(df_sans_vide)
+    ### 2.2 Transformation : validation des types
+    df_type = []
+    for data in df_sans_vide:
+        dsv = transform_type_df(data[0], data[1])
+        df_type.append((data[0], dsv))
 
 
 if __name__ == "__main__":
