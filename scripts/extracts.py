@@ -8,11 +8,11 @@ import os
 # Sauvegarde d'un fichier horodaté dans le dossier cible
 # Paramètre d'entrée : le contenu DataFrame du fichier, le nom cible
 # Sortie : le chemin du fichier sauvegardé
-def save_to_output(df, name, output_dir="./output_csv"):
-    os.makedirs(output_dir, exist_ok=True)
+def save_to_logs(df, name, logs_dir="./logs_csv"):
+    os.makedirs(logs_dir, exist_ok=True)
     now = datetime.now().strftime("%Y%m%d_%Hh%Mm%S")
     filename = f"{now}_{name}_brut.csv"
-    csv_path = os.path.join(output_dir, filename)
+    csv_path = os.path.join(logs_dir, filename)
     df.to_csv(csv_path, index=False)
     print(f"✅ Fichier sauvegardé : {csv_path}")
     return csv_path
@@ -22,10 +22,10 @@ def save_to_output(df, name, output_dir="./output_csv"):
 # Extraction d'un fichier CSV
 # Paramètre d'entrée : le chemin du fichier CSV
 # Sortie : le contenu du fichier CSV sous forme de DataFrame pandas
-def extract_csv_to_df(commande_path, output_dir="./output_csv"):
+def extract_csv_to_df(commande_path, logs_dir="./logs_csv"):
     df = pd.read_csv(commande_path)
     base_name = os.path.splitext(os.path.basename(commande_path))[0]
-    save_to_output(df, base_name, output_dir)
+    save_to_logs(df, base_name, logs_dir)
     return (base_name, df)
 
 
@@ -34,9 +34,9 @@ def extract_csv_to_df(commande_path, output_dir="./output_csv"):
 # avec conversion des tables en fichiers CSV stockés dans /output_scv
 # Paramètre d'entrée : le chemin de la BDD
 # Sortie : liste de dataframes correspondant aux tables SQLite
-def extract_sqlite_to_df(db_path, output_dir="./output_csv"):
+def extract_sqlite_to_df(db_path, logs_dir="./logs_csv"):
     conn = sqlite3.connect(db_path)
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(logs_dir, exist_ok=True)
     query = "SELECT name FROM sqlite_master WHERE type='table';"
     tables = pd.read_sql_query(query, conn)
     dataframes = []
@@ -44,7 +44,7 @@ def extract_sqlite_to_df(db_path, output_dir="./output_csv"):
     for table_name in tables["name"]:
         if table_name != "sqlite_sequence":
             df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
-            save_to_output(df, table_name, output_dir)
+            save_to_logs(df, table_name, logs_dir)
             dataframes.append((table_name, df))
     conn.close()
     return dataframes

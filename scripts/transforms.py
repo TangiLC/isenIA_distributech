@@ -4,6 +4,7 @@ from datetime import datetime
 from scripts.utils import (
     affiche_outcome,
     corriger_date,
+    display_variation,
     nettoyer_texte,
     nettoyer_typographie,
     nettoyer_typographie_agressif,
@@ -105,7 +106,13 @@ def transform_type_df(name, data_df):
                 try:
                     val_float = float(val)
                     if val_float.is_integer():
-                        ligne_valide[champ] = int(val_float)
+                        val_int = int(val_float)
+                        if val != str(val_int):
+                            colored_text = display_variation(str(val_int), val)
+                            print(
+                                f"✅ Correction du type entier dans : '{colored_text}'"
+                            )
+                        ligne_valide[champ] = val_int
                     else:
                         raise ValueError("Nombre décimal détecté")
                 except:
@@ -120,6 +127,9 @@ def transform_type_df(name, data_df):
                     if val_float <= 0:
                         raise ValueError("float <= 0")
                     ligne_valide[champ] = val_float
+                    if val != str(val_float):
+                        colored_text = display_variation(val, str(val_float))
+                        print(f"✅ Correction du type flottant dans : '{colored_text}'")
                 except:
                     ligne_valide[champ] = "*"
                     ligne_erreurs.append(champ)

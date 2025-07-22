@@ -9,6 +9,8 @@ SQLITE_PATH = "data/base_stock.sqlite"
 def main():
 
     ### 1- INITIALISATION : Extraction
+    title = ">EXTRACTION DES DONNÉES".ljust(90)
+    print(f"\033[30;44m {title} \033[0m")
     df_a_traiter = []
     df_a_traiter.append(extract_csv_to_df(COMMANDE_PATH))
     data_sqlite_brut = extract_sqlite_to_df(SQLITE_PATH)
@@ -18,16 +20,37 @@ def main():
 
     ### 2- TRANSFORMATION
     ### 2.1 Transformation : suppression des éléments vides
+    title = ">TRANSFORMATION : Suppression des données vides".ljust(90)
+    print(f"\033[30;44m {title} \033[0m")
     df_sans_vide = []
     for data in df_a_traiter:
         dsv = transform_data_vide_df(data[0], data[1])
         df_sans_vide.append((data[0], dsv))
 
     ### 2.2 Transformation : validation des types
+    title = ">TRANSFORMATION : Validation ou correction des types".ljust(90)
+    print(f"\033[30;44m {title} \033[0m")
     df_type = []
     for data in df_sans_vide:
         dsv = transform_type_df(data[0], data[1])
         df_type.append((data[0], dsv))
+
+    ### 2.3 Transformation : Gestion des valeurs manquantes
+    title = ">TRANSFORMATION : Correction des valeurs manquantes ou aberrentes".ljust(
+        90
+    )
+    print(f"\033[30;44m {title} \033[0m")
+    df_complet = []
+
+    ### 2.4 Transformation : Suppression des doublons
+    title = ">TRANSFORMATION : Suppression des doublons".ljust(90)
+    print(f"\033[30;44m {title} \033[0m")
+    df_unique = []
+
+    ### 2.5 Transformation : Contrôle de l'unicité
+    title = ">TRANSFORMATION : Contrôle de l'unicité".ljust(90)
+    print(f"\033[30;44m {title} \033[0m")
+    df_final = []
 
 
 if __name__ == "__main__":

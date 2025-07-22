@@ -10,4 +10,4 @@ CMD-20250711-001,2025-07-11,1,1,103,4,89.9,no_error
 CMD-20250711-001,2025-07-11,1,1.0,103,4,89.9,region_id_not_format_line_duplicate
 CMD-20250711-001,2025-07-11,1,,108,3,44.9,region_id_missing_line_duplicate
 CMD-20250711-001,1,1,103,4,89.9,column_date_missing
-
+CMD-20250710-001,2025-07-10,1,1,105,2,129,unit_price_not_format

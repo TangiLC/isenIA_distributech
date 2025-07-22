@@ -7,11 +7,14 @@ from datetime import datetime
 # Transformation des espaces, caractères speciaux et typographies
 # Partie. 1 Nettoyer les espaces et les sauts de lignes
 def nettoyer_texte(texte):
-
-    texte = str(texte)
-    texte = texte.strip()  # enlève espaces début/fin
-    texte = texte.replace("\xa0", " ")  # espace insécable -> espace normal
-    texte = texte.replace("\r", "").replace("\n", "")  # supprime saut de ligne
+    temp_texte = str(texte)
+    temp_texte = temp_texte.strip()  # enlève espaces début/fin
+    temp_texte = temp_texte.replace("\xa0", " ")  # espace insécable -> espace normal
+    temp_texte = temp_texte.replace("\r", "")
+    temp_texte = temp_texte.replace("\n", "")  # supprime saut de ligne
+    if temp_texte != texte:
+        colored_text = display_variation(texte, temp_texte)
+        print(f"✅ Correction des espaces dans : '{colored_text}'")
     if pd.isnull(texte):
         return "*"
     return texte
@@ -19,7 +22,7 @@ def nettoyer_texte(texte):
 
 # Partie. 2 Nettoyer la typographie classique (guillemets, tirets)
 def nettoyer_typographie(texte):
-
+    temp_texte = str(texte)
     remplacements = {
         "’": "'",  # apostrophe courbe vers droite
         "“": '"',
@@ -30,7 +33,10 @@ def nettoyer_typographie(texte):
         "—": "-",  # tiret long
     }
     for mauvais, bon in remplacements.items():
-        texte = texte.replace(mauvais, bon)
+        temp_texte = temp_texte.replace(mauvais, bon)
+    if temp_texte != texte:
+        colored_text = display_variation(texte, temp_texte)
+        print(f"✅ Correction de la typographie dans : '{colored_text}'")
     return texte
 
 
@@ -74,8 +80,9 @@ def corriger_date(date_str):
     for fmt in formats_possibles:
         try:
             dt = datetime.strptime(date_str.strip(), fmt)
+            colored_text = display_variation(dt.strftime("%Y-%m-%d"), date_str)
             print(
-                f"✅ Correction réussie : '{date_str}' avec format '{fmt}' → {dt.strftime('%Y-%m-%d')}"
+                f"✅ Correction réussie : '{colored_text}' avec format '{fmt}' → {dt.strftime('%Y-%m-%d')}"
             )
             return dt.strftime("%Y-%m-%d")
         except ValueError:
@@ -146,3 +153,27 @@ def afficher_tableau_horizontal(d, cles_invalides, indent=0, col_width=16):
 
     print(" " * indent + f"| {ligne_cles} |")
     print(" " * indent + f"| {ligne_valeurs} |")
+
+
+#########################################################################
+### mise en forme mot corrigé ###########################################
+def display_variation(original, edited):
+    original = str(original)
+    edited = str(edited)
+    color = "\033[30;41m"
+    reset = "\033[0m"
+    result = ""
+    max_len = max(len(original), len(edited))
+    for i in range(max_len):
+        c_orig = original[i] if i < len(original) else ""
+        c_edit = edited[i] if i < len(edited) else ""
+
+        if c_orig != c_edit:
+            result += f"{color}{c_edit}{reset}"
+        else:
+            result += c_edit
+
+    if not result.endswith(reset):
+        result += reset
+
+    return result
