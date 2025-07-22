@@ -117,3 +117,101 @@ def corriger_date(date_str):
             continue
 
     return "*"
+
+
+#########  TRANSFORM TYPE  #############################################
+# Validation des types des colonnes du dataframe
+# ajout de '*' en cas d'élément incohérent
+# Paramètre d'entrée : dataframe
+# Sortie : dataframe corrigée
+def transform_type_df(name, data_df):
+    champs_obligatoires = data_df.columns.tolist()
+    erreurs = []
+    lignes_valides = []
+
+    for index, ligne in data_df.iterrows():
+        ligne_dict = ligne.to_dict()
+        ligne_valide = {}
+        ligne_erreurs = []
+
+        for champ, valeur in ligne_dict.items():
+            val = str(valeur).strip()
+
+            if champ in [
+                "production_id",
+                "product_id",
+                "quantity",
+                "region_id",
+                "revendeur_id",
+            ]:
+                try:
+                    val_int = int(val)
+                    ligne_valide[champ] = val_int
+                except:
+                    ligne_valide[champ] = "*"
+                    ligne_erreurs.append(champ)
+                continue
+
+            # --------- Champs de type FLOTTANT ---------
+            if champ in ["cout_unitaire", "unit_price"]:
+                try:
+                    val_float = float(val)
+                    if val_float <= 0:
+                        raise ValueError("float <= 0")
+                    ligne_valide[champ] = val_float
+                except:
+                    ligne_valide[champ] = "*"
+                    ligne_erreurs.append(champ)
+                continue
+
+            # --------- Champs de type DATE ---------
+            if champ in ["date_production", "commande_date"]:
+                try:
+                    datetime.strptime(val, "%Y-%m-%d")
+                    ligne_valide[champ] = val
+                except:
+                    correct = corriger_date(val)
+                    ligne_valide[champ] = correct
+                continue
+
+            # --------- Champs de type TEXTE ---------
+            if champ in [
+                "product_name",
+                "region_name",
+                "revendeur_name",
+                "numero_commande",
+            ]:
+                if not any(c.isalpha() for c in val):
+                    ligne_valide[champ] = "*"
+                    ligne_erreurs.append(champ)
+                else:
+                    ligne_valide[champ] = val
+                continue
+
+            # --------- Champs inconnus (non référencés) ---------
+            ligne_valide[champ] = val
+
+        if ligne_erreurs:
+            erreurs.append(
+                {
+                    "ligne": index + 2,  # +2 pour prendre en compte l'en-tête
+                    "erreur": "Champs invalides ou non conformes",
+                    "champs": ligne_erreurs,
+                    "données": ligne_dict,
+                }
+            )
+
+        lignes_valides.append(ligne_valide)
+
+    # --------- Rapport console ---------
+    if erreurs:
+        print(f"\033[91m⚠️ Lignes invalides détectées :\033[0m")
+        for err in erreurs:
+            print(
+                f"\033[33mLigne {err['ligne']} → champs invalides : {err['champs']}\033[0m"
+            )
+    else:
+        print(f"\033[32m✅ Toutes les lignes sont valides.\033[0m")
+
+    # --------- Retour du DataFrame nettoyé ---------
+    return pd.DataFrame(lignes_valides)
