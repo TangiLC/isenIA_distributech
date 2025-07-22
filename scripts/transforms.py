@@ -186,6 +186,7 @@ def transform_type_df(name, data_df):
                 "revendeur_name",
                 # "numero_commande",
             ]:
+
                 if not any(c.isalpha() for c in val):
                     ligne_valide[champ] = "*"
                     ligne_erreurs.append(champ)
