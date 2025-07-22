@@ -1,4 +1,5 @@
-/.dtvenv
+/.venv
 /bdd/db
 /output_csv
 /scripts/__pycache__
+/output_csv
