@@ -195,7 +195,10 @@ def transform_type_df(name, data_df):
                     ligne_valide[champ] = "*"
                     ligne_erreurs.append(champ)
                 else:
-                    ligne_valide[champ] = val
+                    val1=nettoyer_texte(val)
+                    val2=nettoyer_typographie(val1)
+                    val3=nettoyer_typographie_aggresif(val2)
+                    ligne_valide[champ] = val3
                 continue
 
             # --------- Champs inconnus (non référencés) ---------
