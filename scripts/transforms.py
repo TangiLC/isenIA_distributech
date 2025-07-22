@@ -1,6 +1,14 @@
 import pandas as pd
 from datetime import datetime
 
+from scripts.utils import (
+    affiche_outcome,
+    corriger_date,
+    nettoyer_texte,
+    nettoyer_typographie,
+    nettoyer_typographie_agressif,
+)
+
 
 #########  TRANSFORM ELEMENT VIDE  #############################################
 # Transformation des éléments vides d'une dataframe
@@ -10,7 +18,7 @@ from datetime import datetime
 def transform_data_vide_df(name, data_df):
 
     champs_obligatoires = data_df.columns.tolist()
-    print(f"[{name.upper()}]Champs attendus : {champs_obligatoires}", end=">")
+    print(f"[{name.upper()}]Champs attendus : {champs_obligatoires}")
     erreurs = []
     lignes_valides = []
 
@@ -30,7 +38,7 @@ def transform_data_vide_df(name, data_df):
                 {
                     "ligne": index + 2,  # +2 pour tenir compte de l'en-tête (ligne 1)
                     "erreur": "Longueur de ligne incorrecte",
-                    "données": ligne_dict,
+                    "data": ligne_dict,
                 }
             )
             continue
@@ -44,81 +52,29 @@ def transform_data_vide_df(name, data_df):
                 ligne_complete[champ] = val
 
         # Vérification : détection des champs marqués comme manquants
-        champs_manquants = [
-            champ for champ, val in ligne_complete.items() if val == "*"
-        ]
+        champs_erreurs = [champ for champ, val in ligne_complete.items() if val == "*"]
 
-        if champs_manquants:
+        if champs_erreurs:
             erreurs.append(
                 {
                     "ligne": index + 2,
                     "erreur": "Champs manquants",
-                    "champs_manquants": champs_manquants,
-                    "données": ligne_complete,
+                    "champs_erreurs": champs_erreurs,
+                    "data": ligne_complete,
                 }
             )
 
         lignes_valides.append(ligne_complete)
 
     # Afficher les erreurs à l'écran : à vérifier plus tard comment le rendre plus précis
-    if erreurs:
-        print(f"\n\033[91m⚠️ Lignes avec problèmes détectées :\033[0m")
-        for err in erreurs:
-            if err["erreur"] == "Longueur de ligne incorrecte":
-                print(
-                    f"\033[35mLigne {err['ligne']} → ligne ignorée (longueur incorrecte)\033[0m"
-                )
-            else:
-                print(
-                    f"\033[34mLigne {err['ligne']} → champs manquants : {err['champs_manquants']}\033[0m"
-                )
-    else:
-        print(f"\033[32m✅ Toutes les lignes sont valides.\033[0m")
+    affiche_outcome(
+        name, "Toutes les lignes sont vérifiées, absence de valeur nulle.", erreurs
+    )
 
     # On crée un nouveau fichier avec uniquement les lignes valides.
     df_valide = pd.DataFrame(lignes_valides)
 
     return df_valide
-
-
-# Transformation des dates d'une dataframe
-# # Paramètre d'entrée : dataframe
-# Sortie : date corrigée
-
-
-def corriger_date(date_str):
-
-    if pd.isnull(date_str) or not isinstance(date_str, str):
-        print(f"❌ Entrée invalide ou nulle : {date_str}")
-        return "*"
-
-    # Essai de plusieurs formats possibles
-    formats_possibles = [
-        "%Y-%m-%d",
-        "%d/%m/%Y",
-        "%m/%d/%Y",
-        "%d-%m-%Y",
-        "%Y/%m/%d",
-        "%Y%m%d",
-        "%d%m%Y",
-        "%m-%d-%Y",
-        "%d %b %Y",
-        "%d %B %Y",
-    ]
-
-    for fmt in formats_possibles:
-        try:
-            dt = datetime.strptime(date_str.strip(), fmt)
-            print(
-                f"✅ Correction réussie : '{date_str}' avec format '{fmt}' → {dt.strftime('%Y-%m-%d')}"
-            )
-            return dt.strftime("%Y-%m-%d")
-        except ValueError:
-            print(f"⛔ Format invalide pour '{date_str}' avec '{fmt}'")
-            continue
-
-    print(f"❌ Aucun format valide trouvé pour : {date_str}")
-    return "*"
 
 
 #########  TRANSFORM TYPE  #############################################
@@ -184,17 +140,18 @@ def transform_type_df(name, data_df):
                 "product_name",
                 "region_name",
                 "revendeur_name",
-                # "numero_commande",
+                "numero_commande",
             ]:
 
                 if not any(c.isalpha() for c in val):
                     ligne_valide[champ] = "*"
                     ligne_erreurs.append(champ)
                 else:
-                    val1 = nettoyer_texte(val)
-                    val2 = nettoyer_typographie(val1)
-                    val3 = nettoyer_typographie_agressif(val2)
-                    ligne_valide[champ] = val3
+                    if champ != "numero_commande":
+                        val1 = nettoyer_texte(val)
+                        val2 = nettoyer_typographie(val1)
+                        # val3 = nettoyer_typographie_agressif(val2)
+                        ligne_valide[champ] = val2
                 continue
 
             # --------- Champs inconnus (non référencés) ---------
@@ -205,70 +162,16 @@ def transform_type_df(name, data_df):
                 {
                     "ligne": index + 2,  # +2 pour prendre en compte l'en-tête
                     "erreur": "Champs invalides ou non conformes",
-                    "champs": ligne_erreurs,
-                    "données": ligne_dict,
+                    "champs_erreurs": ligne_erreurs,
+                    "data": ligne_dict,
                 }
             )
 
         lignes_valides.append(ligne_valide)
 
     # --------- Rapport console ---------
-    if erreurs:
-        print(f"\033[91m⚠️ Lignes invalides détectées :\033[0m")
-        for err in erreurs:
-            print(
-                f"\033[33mLigne {err['ligne']} → champs invalides : {err['champs']}\033[0m"
-            )
-    else:
-        print(f"\033[32m✅ Toutes les lignes sont valides.\033[0m")
-
+    affiche_outcome(
+        name, "Toutes les lignes sont vérifiées, absence de champ invalide.", erreurs
+    )
     # --------- Retour du DataFrame nettoyé ---------
     return pd.DataFrame(lignes_valides)
-
-
-#########  TRANSFORM : Nettoyage des espaces, caractères et typographies  #############################################
-# Transformation des espaces, caractères speciaux et typographies
-# Partie. 1 Nettoyer les espaces et les sauts de lignes
-def nettoyer_texte(texte):
-    if pd.isnull(texte):
-        return "*"
-    texte = str(texte)
-    texte = texte.strip()  # enlève espaces début/fin
-    texte = texte.replace("\xa0", " ")  # espace insécable -> espace normal
-    texte = texte.replace("\r", "").replace("\n", "")  # supprime saut de ligne
-    return texte
-
-
-# Partie. 2 Nettoyer la typographie classique (guillemets, tirets)
-def nettoyer_typographie(texte):
-    if pd.isnull(texte):
-        return "*"
-    texte = str(texte).strip()
-
-    remplacements = {
-        "’": "'",  # apostrophe courbe vers droite
-        "“": '"',
-        "”": '"',
-        "«": '"',
-        "»": '"',
-        "–": "-",  # tiret moyen
-        "—": "-",  # tiret long
-    }
-
-    for mauvais, bon in remplacements.items():
-        texte = texte.replace(mauvais, bon)
-
-    return texte
-
-
-# Partie. 3 Nettoyer en supprimant accents et caractères spéciaux
-# la typographie classique (guillemets, tirets)
-import unicodedata
-
-
-def nettoyer_typographie_agressif(texte):
-    if pd.isnull(texte):
-        return "*"
-    texte = unicodedata.normalize("NFD", texte)  # sépare caractères + accents
-    texte = texte.encode("ascii", "ignore").decode("utf-8")  # enlève accents
-    return texte

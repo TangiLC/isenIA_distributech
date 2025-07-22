@@ -10,7 +10,7 @@ import os
 # Sortie : le chemin du fichier sauvegardé
 def save_to_output(df, name, output_dir="./output_csv"):
     os.makedirs(output_dir, exist_ok=True)
-    now = datetime.now().strftime("%Y_%m_%d_%Hh%Mm%S")
+    now = datetime.now().strftime("%Y%m%d_%Hh%Mm%S")
     filename = f"{now}_{name}_brut.csv"
     csv_path = os.path.join(output_dir, filename)
     df.to_csv(csv_path, index=False)

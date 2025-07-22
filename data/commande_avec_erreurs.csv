@@ -1,13 +1,13 @@
-numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_price
-CMD-20250710-001,2025-07-10,1,1,101,5,59.9
-CMD-20250710-001,2025-07-10,1,1.0,102,10,19.9
-CMD-20250710-001,2025-07-10,-1,1,102,10,19.9
-CMD-20250710-001,2025-07-10,1,1,105,2,129.9
-CMD-20250711-001,2025 07 11,1,1,108,3,44.9
-CMD 20250711.001,2025-07-11,1,1,104,4,24.9
-CMD-20250711-001,2025-07-11,1,1,103,4,89.9
-,2025-07-11,1,1,108,3,44.9
-CMD-20250711-001,2025-07-11,1,1.0,103,4,89.9
-CMD-20250711-001,2025-07-11,1,,108,3,44.9
-CMD-20250711-001,1,1,103,4,89.9
+numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_price,error_type
+CMD-20250710-001,2025-07-10,1,1,101,5,59.9,no_error
+CMD-20250710-001,2025-07-10,1,1.0,102,10,19.9,region_id_not_format
+CMD-20250710-001,2025-07-10,-1,1,102,10,19.9,revendeur_id_not_format
+CMD-20250710-001,2025-07-10,1,1,105,2,129.9,no_error
+CMD-20250711-001,2025 07 11,1,1,108,3,44.9,commande_date_not_format
+CMD 20250711.001,2025-07-11,1,1,104,4,24.9,numero_commande_not_format
+CMD-20250711-001,2025-07-11,1,1,103,4,89.9,no_error
+,2025-07-11,1,1,108,3,44.9,data_numero_commande_missing
+CMD-20250711-001,2025-07-11,1,1.0,103,4,89.9,region_id_not_format_line_duplicate
+CMD-20250711-001,2025-07-11,1,,108,3,44.9,region_id_missing_line_duplicate
+CMD-20250711-001,1,1,103,4,89.9,column_date_missing
 

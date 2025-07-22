@@ -44,7 +44,7 @@ CREATE TABLE production (
 regions = [
     (1, "Île-de-France"),
     (2, "Occitanie"),
-    (3, "Auvergne-Rhône-Alpes"),
+    (3, "Auvergne–Rhône-Alpes"),
     (4, "Bretagne"),
 ]
 cur.executemany("INSERT INTO region VALUES (?, ?);", regions)
@@ -67,7 +67,7 @@ cur.executemany("INSERT INTO revendeur VALUES (?, ?, ?);", revendeurs)
 # Insertion des produits
 produits = [
     (101, "Casque Bluetooth", 59.90),
-    (102, "Chargeur USB-C", 19.90),
+    (102, "Chargeur USB-C", 19.90),
     (103, "Enceinte Portable", 89.90),
     (104, "Batterie Externe", 24.90),
     (105, "Montre Connectée", 129.90),
@@ -75,7 +75,7 @@ produits = [
     (107, "Hub USB 3.0", 34.90),
     (108, "Clavier sans fil", 44.90),
     (109, "Souris ergonomique", 39.90),
-    (110, "Station d'accueil", 109.90),
+    (110, "Station d’accueil", 109.90),
 ]
 cur.executemany("INSERT INTO produit VALUES (?, ?, ?);", produits)
 
