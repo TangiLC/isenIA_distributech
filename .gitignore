@@ -6,3 +6,4 @@
 /.dtvenv
 /logs_csv
 /data
+.env
