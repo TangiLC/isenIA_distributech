@@ -22,13 +22,13 @@ CREATE TABLE IF NOT EXISTS produit (
 CREATE TABLE IF NOT EXISTS log_commande_brut (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     log_date DATETIME,
-    nom TEXT NOT NULL
+    nom_fichier TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS log_production_brut (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     log_date DATETIME,
-    nom TEXT NOT NULL
+    nom_fichier TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS production (
