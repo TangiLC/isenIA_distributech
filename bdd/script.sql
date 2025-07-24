@@ -74,4 +74,17 @@ CREATE TABLE IF NOT EXISTS stock (
     FOREIGN KEY (product_id) REFERENCES produit(product_id)
 );
 
+-- INDEXES pour optimiser les requêtes
+CREATE INDEX idx_revendeur_region ON revendeur(region_id);
+CREATE INDEX idx_production_log ON production(log_id);
+CREATE INDEX idx_commande_log ON commande(log_id);
+CREATE INDEX idx_commande_revendeur ON commande(revendeur_id);
+CREATE INDEX idx_produit_production_pid ON produit_production(production_id);
+CREATE INDEX idx_produit_production_produit ON produit_production(product_id);
+CREATE INDEX idx_commande_produit_commande ON commande_produit(commande_id);
+CREATE INDEX idx_commande_produit_produit ON commande_produit(product_id);
+CREATE INDEX idx_stock_product ON stock(product_id);
+CREATE INDEX idx_production_date ON production(date_production);
+CREATE INDEX idx_commande_date ON commande(commande_date);
+CREATE INDEX idx_stock_date ON stock(stock_date);
 

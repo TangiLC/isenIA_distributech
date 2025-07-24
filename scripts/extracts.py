@@ -11,7 +11,7 @@ import os
 def save_to_logs(df, name, logs_dir="./logs_csv"):
     os.makedirs(logs_dir, exist_ok=True)
     now = datetime.now().strftime("%Y%m%d_%Hh%Mm%S")
-    filename = f"{now}_{name}_brut.csv"
+    filename = f"{now}_{name}.csv"
     csv_path = os.path.join(logs_dir, filename)
     df.to_csv(csv_path, index=False)
     print(f"✅ Fichier sauvegardé : {csv_path}")
@@ -42,9 +42,23 @@ def extract_sqlite_to_df(db_path, logs_dir="./logs_csv"):
     dataframes = []
 
     for table_name in tables["name"]:
-        if table_name != "sqlite_sequence":
+        if table_name in ["production", "produit"]:
             df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
-            save_to_logs(df, table_name, logs_dir)
+            save_to_logs(df, table_name + "_brut", logs_dir)
             dataframes.append((table_name, df))
+        elif table_name == "revendeur":
+            df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
+            if "revendeur_name" in df.columns and "revendeur_id" in df.columns:
+                df["revendeur_name"] = df["revendeur_id"].apply(anonymize_name)
+            save_to_logs(df, table_name + "_rgpd", logs_dir)
+            dataframes.append((table_name, df))
+
     conn.close()
     return dataframes
+
+
+##############################################################################
+# Anonymization revendeur (RGPD) #############################################
+def anonymize_name(id):
+    formatted_id = str(id).zfill(3)
+    return f"revendeur_{formatted_id}"

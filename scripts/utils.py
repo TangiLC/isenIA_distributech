@@ -9,6 +9,49 @@ from scripts.affichage import affiche_success_ligne
 #########  TRANSFORM : Nettoyage des espaces, caractères et typographies  #####
 # Transformation des espaces, caractères speciaux et typographies
 # Partie. 1 Nettoyer les espaces et les sauts de lignes
+def corriger_ocr(val, ref):
+    if not isinstance(val, str):
+        return val
+
+    corrections = {
+        "O": "0",
+        "D": "0",
+        "Q": "0",
+        "l": "1",
+        "I": "1",
+        "i": "1",
+        "t": "t",
+        "|": "1",
+        "Z": "2",
+        "z": "2",
+        "E": "3",
+        "A": "4",
+        "h": "4",
+        "S": "5",
+        "s": "5",
+        "G": "6",
+        "b": "6",
+        "C": "6",
+        "T": "7",
+        "L": "7",
+        "B": "8",
+        "R": "8",
+        "g": "9",
+        "q": "9",
+        "p": "9",
+    }
+
+    val_corrige = "".join(corrections.get(c, c) for c in val)
+
+    if val_corrige != val:
+        affiche_success_ligne(ref, "es nombres interprétés en lettre", val_corrige, val)
+
+    return val_corrige
+
+
+#########  TRANSFORM : Nettoyage des espaces, caractères et typographies  #####
+# Transformation des espaces, caractères speciaux et typographies
+# Partie. 1 Nettoyer les espaces et les sauts de lignes
 def nettoyer_texte(texte, ref):
     if pd.isnull(texte):
         return "*", True  # Valeur, Erreur
@@ -67,7 +110,6 @@ def corriger_date(date_str):
     formats_possibles = [
         "%Y_%m_%d",
         "%d/%m/%Y",
-        "%m/%d/%Y",
         "%d-%m-%Y",
         "%Y/%m/%d",
         "%Y%m%d",

@@ -1,10 +1,12 @@
 certifi==2025.7.14
 charset-normalizer==3.4.2
+dotenv==0.9.9
 idna==3.10
 mysql-connector-python==9.3.0
 numpy==2.3.1
 pandas==2.3.1
 python-dateutil==2.9.0.post0
+python-dotenv==1.1.1
 pytz==2025.2
 requests==2.32.4
 setuptools==80.9.0

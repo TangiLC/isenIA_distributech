@@ -3,6 +3,7 @@ from datetime import datetime
 
 from scripts.utils import (
     corriger_date,
+    corriger_ocr,
     nettoyer_numero_commande,
     nettoyer_texte,
     nettoyer_typographie,
@@ -134,15 +135,16 @@ def transform_type_df(name, data_df):
             ]:
                 try:
                     # voir inférence de type Pandas (doc)
+                    ref = {"name": name, "ligne": index + 2, "champ": champ}
                     if isinstance(val, (int, float)):
                         val_float = float(val)
                     else:
                         val_str = str(val).strip()
-                        val_float = float(val_str)
+                        val_corr = corriger_ocr(val_str, ref)
+                        val_float = float(val_corr)
                     if val_float.is_integer():
                         val_int = int(val_float)
                         if val != str(val_int):
-                            ref = {"name": name, "ligne": index + 2, "champ": champ}
                             affiche_success_ligne(ref, "u type entier", val_int, val)
                         ligne_valide[champ] = val_int
                     else:
@@ -160,16 +162,17 @@ def transform_type_df(name, data_df):
             # --------- Champs de type FLOTTANT ---------
             if champ in ["cout_unitaire", "unit_price"]:
                 try:
+                    ref = {"name": name, "ligne": index + 2, "champ": champ}
                     if isinstance(valeur, (int, float)):
                         val_float = float(valeur)
                     else:
                         val_str = str(valeur).strip()
-                        val_float = float(val_str)
+                        val_corr = corriger_ocr(val_str, ref)
+                        val_float = float(val_corr)
                     if val_float <= 0:
                         raise ValueError("float <= 0")
                     ligne_valide[champ] = val_float
                     if val != str(val_float):
-                        ref = {"name": name, "ligne": index + 2, "champ": champ}
                         affiche_success_ligne(ref, "u type flottant", val, val_float)
                 except:
                     val_clean = str(valeur).strip() if valeur is not None else "*"
