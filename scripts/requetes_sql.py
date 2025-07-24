@@ -8,11 +8,11 @@ load_dotenv()
 def get_revendeur_region():
     try:
         conn = mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME"),
+            host=os.getenv("BDD_HOST"),
+            port=os.getenv("BDD_PORT"),
+            user=os.getenv("BDD_USER"),
+            password=os.getenv("BDD_PASSWORD"),
+            database=os.getenv("BDD_NAME"),
         )
         cursor = conn.cursor()
         cursor.execute("SELECT revendeur_id, region_id FROM revendeur")
@@ -35,11 +35,11 @@ def get_revendeur_region():
 def get_product_unit_prices():
     try:
         conn = mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME"),
+            host=os.getenv("BDD_HOST"),
+            port=os.getenv("BDD_PORT"),
+            user=os.getenv("BDD_USER"),
+            password=os.getenv("BDD_PASSWORD"),
+            database=os.getenv("BDD_NAME"),
         )
         cursor = conn.cursor()
         cursor.execute("SELECT product_id, cout_unitaire FROM produit")
