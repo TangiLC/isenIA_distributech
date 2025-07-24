@@ -1,3 +1,30 @@
+import sys
+import time
+
+###############################################################################
+# Affichage du titre avec animation barre de progression
+# Paramètre d'entrée : titre
+# Affichage progressif
+
+
+def affiche_titre(title: str):
+
+    style_prefix = "\033[30;44m "
+    style_suffix = " \033[0m"
+
+    debut = title[:45]
+    fin = title[45:]
+
+    sys.stdout.write(style_prefix + debut)
+    sys.stdout.flush()
+    for c in fin:
+        time.sleep(0.01)
+        sys.stdout.write(c)
+        sys.stdout.flush()
+    sys.stdout.write(style_suffix + "\n")
+    sys.stdout.flush()
+
+
 ###############################################################################
 # Affichage du message en fin de traitement ligne
 # Paramètre d'entrée : message ok et liste d'erreurs

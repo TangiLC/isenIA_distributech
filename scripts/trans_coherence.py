@@ -26,11 +26,9 @@ def transform_coherence_commande_df(name, data_df):
             try:
                 parts = numero_commande.split("-")
                 if len(parts) < 3:
-                    raise ValueError(
-                        f"Format numero_commande invalide: {numero_commande}"
-                    )
-
-                date_commande_no = parts[1]
+                    date_commande_no = "19700101"
+                else:
+                    date_commande_no = parts[1]
                 if isinstance(commande_date, str):
                     date_obj = datetime.strptime(commande_date, "%Y-%m-%d")
                     date_from_field = date_obj.strftime("%Y%m%d")
