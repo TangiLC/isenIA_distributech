@@ -71,6 +71,9 @@ CREATE TABLE IF NOT EXISTS stock (
     stock_date DATE,
     product_id INT NOT NULL,
     quantity INT,
+    movement INT NOT NULL,
+    operator_id INT,
+    FOREIGN KEy (operator_id) REFERENCES revendeur(revendeur_id)
     FOREIGN KEY (product_id) REFERENCES produit(product_id)
 );
 

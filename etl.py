@@ -1,6 +1,6 @@
 from scripts.affichage import affiche_titre
 from scripts.extracts import extract_csv_to_df, extract_sqlite_to_df
-from scripts.trans_coherence import (
+from scripts.transf_coherence import (
     transform_coherence_commande_df,
     transform_coherence_prix_unitaire_df,
     transform_coherence_revendeur_df,
@@ -57,12 +57,12 @@ def main():
         df_complet.append((data[0], t2))
 
     ### 2.4 Transformation : Suppression des doublons
-    title = ">TRANSFORMATION : Suppression des doublons".ljust(110)
+    title = ">TRANSFORMATION : Contrôle unicité et suppression des doublons".ljust(110)
     affiche_titre(title)
     df_unique = []
 
-    ### 2.5 Transformation : Contrôle de l'unicité
-    title = ">TRANSFORMATION : Contrôle de l'unicité".ljust(110)
+    ### 3 LOAD
+    title = ">LOAD : sauvegarde des logs dans la BDD".ljust(110)
     affiche_titre(title)
     df_final = []
 
