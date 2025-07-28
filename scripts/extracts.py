@@ -3,12 +3,42 @@ import pandas as pd
 from datetime import datetime
 import os
 
+from scripts.requetes_sql import insert_into_bddlogs
 
-#########  SAVE TO OUTPUT  ####################################################
-# Sauvegarde d'un fichier horodaté dans le dossier cible
-# Paramètre d'entrée : le contenu DataFrame du fichier, le nom cible
-# Sortie : le chemin du fichier sauvegardé
+
+def get_list_of_files(path):
+    """Récupérer la liste des fichiers contenus dans le dossier {path}, classées par type
+    Args:
+        path (str): chemin du dossier
+    Returns:
+        files (dict): un dictionnaire des fichiers csv et sqlite
+    """
+    files = {}
+    if not os.path.isdir(path):
+        raise ValueError(f"❌ Le chemin {path} n'est pas un dossier valide.")
+
+    for nom_fichier in os.listdir(path):
+        chemin_fichier = os.path.join(path, nom_fichier)
+        if os.path.isfile(chemin_fichier):
+            ext = os.path.splitext(nom_fichier)[1].lower().lstrip(".")
+            if ext in ["csv", "sqlite"]:
+                if ext not in files:
+                    files[ext] = []
+                files[ext].append(nom_fichier)
+
+    return files
+
+
+###############################################################################
 def save_to_logs(df, name, logs_dir="./logs_csv"):
+    """Sauvegarde du fichier csv dans le dossier logs_csv
+    Args:
+        df (dataframe): le dataframe extrait des fichiers en entrée
+        name (str): le nom précédent du fichier extrait
+        logs_dir (str, optional): le chemin du dossier archive, defaults to "./logs_csv".
+    Returns:
+        csv_path(str): le nom complet du fichier archive créé
+    """
     os.makedirs(logs_dir, exist_ok=True)
     now = datetime.now().strftime("%Y%m%d_%Hh%Mm%S")
     filename = f"{now}_{name}.csv"
@@ -18,23 +48,37 @@ def save_to_logs(df, name, logs_dir="./logs_csv"):
     return csv_path
 
 
-#########  EXTRACT CSV TO DF  #################################################
-# Extraction d'un fichier CSV
-# Paramètre d'entrée : le chemin du fichier CSV
-# Sortie : le contenu du fichier CSV sous forme de DataFrame pandas
+###############################################################################
 def extract_csv_to_df(commande_path, logs_dir="./logs_csv"):
+    """Extraction d'un fichier csv vers dataframe (utilise Pandas)
+    Args:
+        commande_path (str): chemin du fichier commande revendeur
+        logs_dir (str, optional): le chemin du dossier archive, defaults to "./logs_csv".
+
+    Returns:
+        base_name(str): le nom minimal du fichier de commande
+        df (dataframe): le fichier dataframe correspondant extrait par Pandas
+    """
     df = pd.read_csv(commande_path)
     base_name = os.path.splitext(os.path.basename(commande_path))[0]
-    save_to_logs(df, base_name, logs_dir)
+    csvpath = save_to_logs(df, base_name, logs_dir)
+    id = insert_into_bddlogs(csvpath, "log_commande_brut")
+    base_name = [os.path.splitext(os.path.basename(commande_path))[0], id]
     return (base_name, df)
 
 
-#########  EXTRACT SQLITE TO CSV  #############################################
-# Extraction d'une BDD SQLite
-# avec conversion des tables en fichiers CSV stockés dans /output_scv
-# Paramètre d'entrée : le chemin de la BDD
-# Sortie : liste de dataframes correspondant aux tables SQLite
+###############################################################################
 def extract_sqlite_to_df(db_path, logs_dir="./logs_csv"):
+    """Extraction d'un fichier sqlite vers dataframe (utilise Pandas)
+    Args:
+        db_path (str): chemin du fichier sqlite
+        logs_dir (str, optional): le chemin du dossier archive, defaults to "./logs_csv".
+
+    Returns:
+        une liste de :
+        table_name(str): le nom minimal de la table issue du fichier sqlite
+        df (dataframe): le fichier dataframe correspondant extrait par Pandas
+    """
     conn = sqlite3.connect(db_path)
     os.makedirs(logs_dir, exist_ok=True)
     query = "SELECT name FROM sqlite_master WHERE type='table';"
@@ -42,10 +86,12 @@ def extract_sqlite_to_df(db_path, logs_dir="./logs_csv"):
     dataframes = []
 
     for table_name in tables["name"]:
-        if table_name in ["production", "produit"]:
+        if table_name in ["production"]:
             df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
-            save_to_logs(df, table_name + "_brut", logs_dir)
-            dataframes.append((table_name, df))
+            csvpath = save_to_logs(df, table_name + "_brut", logs_dir)
+            id = insert_into_bddlogs(csvpath, "log_production_brut")
+            dataframes.append(([table_name, id], df))
+        # TO DO Discuss elif ??
         elif table_name == "revendeur":
             df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
             if "revendeur_name" in df.columns and "revendeur_id" in df.columns:
@@ -58,7 +104,13 @@ def extract_sqlite_to_df(db_path, logs_dir="./logs_csv"):
 
 
 ##############################################################################
-# Anonymization revendeur (RGPD) #############################################
 def anonymize_name(id):
+    """anonymisation partiel du nom du revendeur pour éviter de stocker
+        des données sensibles en log (RGPD)
+    Args:
+        id (int): l'id du revendeur
+    Returns:
+        anonym (str): un nom partiellement anonymisé
+    """
     formatted_id = str(id).zfill(3)
     return f"revendeur_{formatted_id}"

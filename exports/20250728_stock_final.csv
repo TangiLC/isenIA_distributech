@@ -1,0 +1,11 @@
+product_id,quantity,stock_date,product_name
+101,45,2025-07-10,Casque Bluetooth
+102,70,2025-07-10,Chargeur USB-C
+103,36,2025-07-11,Enceinte Portable
+104,60,2025-07-02,Batterie Externe
+105,18,2025-07-10,Montre Connectée
+106,35,2025-07-03,Webcam HD
+107,25,2025-07-04,Hub USB 3.0
+108,27,2025-07-11,Clavier sans fil
+109,45,2025-07-05,Souris ergonomique
+110,15,2025-07-05,Station d’accueil

@@ -2,6 +2,14 @@ from scripts.affichage import affiche_outcome
 
 
 def nettoyer_dataframe_unicite(name, data_df):
+    """Suppression des colonnes en doublon
+        transposition .T du dataframe lignes/colonnes puis retour après suppression
+    Args:
+        name (lst): [nom du fichier csv, id du log]
+        data_df (dataframe): données csv extraites en dataframe (Pandas)
+    Returns:
+        df corrigé(dataframe): données corrigées
+    """
     # Étape 1 : Supprimer les colonnes en doublon (même contenu) Fonction T transpose
     colonnes_uniques = data_df.T.drop_duplicates().T
     colonnes_supprimees = set(data_df.columns) - set(colonnes_uniques.columns)

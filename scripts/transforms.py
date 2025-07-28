@@ -11,14 +11,22 @@ from scripts.utils import (
 
 from scripts.affichage import affiche_success_ligne, affiche_outcome
 
+CHAMP_INT = ["production_id", "product_id", "quantity", "region_id", "revendeur_id"]
+CHAMP_FLOAT = ["cout_unitaire", "unit_price"]
+CHAMP_DATE = ["date_production", "commande_date"]
+CHAMP_TXT = ["product_name", "region_name", "revendeur_name", "numero_commande"]
 
-#########  TRANSFORM ELEMENT VIDE  #############################################
-# Transformation des éléments vides d'une dataframe
-# ajout de '*' en cas d'élément manquant
-# Paramètre d'entrée : dataframe
-# Sortie : dataframe corrigée
+
 def transform_data_vide_df(name, data_df):
+    """Correction ou suppression des données vides
+        ajout de '*' en cas de données vides pour correction ultérieure,
+        suppression de ligne trop courte
 
+    name (lst): [nom du fichier csv, id du log]
+        data_df (dataframe): données csv extraites en dataframe (Pandas)
+    Returns:
+        df corrigé(dataframe): données corrigées
+    """
     champs_obligatoires = data_df.columns.tolist()
     print(f"[{name.upper()}]Champs attendus : {champs_obligatoires}")
     erreurs = []
@@ -33,7 +41,6 @@ def transform_data_vide_df(name, data_df):
         valeurs = list(ligne_dict.values())
 
         # Vérification 1 : ligne avec un mauvais nombre de colonnes
-
         if len(valeurs) < len(champs_obligatoires) or pd.isnull(valeurs[-1]):
             # TO DO : Moyen de reconstituer une valeur manquante avec décalage des colonnes ?
             erreurs.append(
@@ -68,23 +75,25 @@ def transform_data_vide_df(name, data_df):
 
         lignes_valides.append(ligne_complete)
 
-    # Afficher les erreurs à l'écran : à vérifier plus tard comment le rendre plus précis
     affiche_outcome(
         name, "Toutes les lignes sont vérifiées, absence de valeur nulle.", erreurs
     )
 
-    # On crée un nouveau fichier avec uniquement les lignes valides.
     df_valide = pd.DataFrame(lignes_valides)
 
     return df_valide
 
 
-#########  TRANSFORM TYPE  #############################################
-# Validation des types des colonnes du dataframe
-# ajout de '*' en cas d'élément incohérent
-# Paramètre d'entrée : dataframe
-# Sortie : dataframe corrigée
+##############################################################################
 def transform_type_df(name, data_df):
+    """Correction ou suppression des types selon les attentes
+        ajout de '*' en cas de données incohérentes pour correction ultérieure,
+
+    name (lst): [nom du fichier csv, id du log]
+        data_df (dataframe): données csv extraites en dataframe (Pandas)
+    Returns:
+        df corrigé(dataframe): données corrigées
+    """
     champs_obligatoires = data_df.columns.tolist()
     print(f"[{name.upper()}]Champs attendus : {champs_obligatoires}")
     erreurs = []
@@ -92,49 +101,17 @@ def transform_type_df(name, data_df):
 
     for index, ligne in data_df.iterrows():
         ligne_dict = ligne.to_dict()
-        valeurs = list(ligne_dict.values())
-
-        # Vérification 1 : ligne avec un mauvais nombre de colonnes
-        if len(valeurs) < len(champs_obligatoires) or pd.isnull(valeurs[-1]):
-            # Créer une version basique nettoyée pour l'affichage d'erreur
-            ligne_display = {}
-            for champ, val in ligne_dict.items():
-                if pd.isnull(val):
-                    ligne_display[champ] = "*"
-                else:
-                    ligne_display[champ] = str(val).strip() if val != "" else "*"
-
-            erreurs.append(
-                {
-                    "ligne": index + 2,  # +2 pour tenir compte de l'en-tête (ligne 1)
-                    "erreur": "Longueur de ligne incorrecte",
-                    "data": ligne_display,  # Version nettoyée basique
-                }
-            )
-            continue
-
         ligne_valide = {}
         ligne_erreurs = []
 
         for champ, valeur in ligne_dict.items():
-            # Gestion des valeurs nulles comme dans transform_data_vide_df
-            if pd.isnull(valeur):
-                ligne_valide[champ] = "*"
-                ligne_erreurs.append(champ)
-                continue
 
             val = str(valeur).strip()
 
             # --------- Champs de type ENTIER ---------
-            if champ in [
-                "production_id",
-                "product_id",
-                "quantity",
-                "region_id",
-                "revendeur_id",
-            ]:
+            if champ in CHAMP_INT:
                 try:
-                    # voir inférence de type Pandas (doc)
+                    # voir inférence de type Pandas
                     ref = {"name": name, "ligne": index + 2, "champ": champ}
                     if isinstance(val, (int, float)):
                         val_float = float(val)
@@ -160,7 +137,7 @@ def transform_type_df(name, data_df):
                 continue
 
             # --------- Champs de type FLOTTANT ---------
-            if champ in ["cout_unitaire", "unit_price"]:
+            if champ in CHAMP_FLOAT:
                 try:
                     ref = {"name": name, "ligne": index + 2, "champ": champ}
                     if isinstance(valeur, (int, float)):
@@ -181,7 +158,7 @@ def transform_type_df(name, data_df):
                 continue
 
             # --------- Champs de type DATE ---------
-            if champ in ["date_production", "commande_date"]:
+            if champ in CHAMP_DATE:
                 try:
                     datetime.strptime(val, "%Y-%m-%d")
                     ligne_valide[champ] = val
@@ -197,12 +174,7 @@ def transform_type_df(name, data_df):
                 continue
 
             # --------- Champs de type TEXTE ---------
-            if champ in [
-                "product_name",
-                "region_name",
-                "revendeur_name",
-                "numero_commande",
-            ]:
+            if champ in CHAMP_TXT:
 
                 if not any(c.isalpha() for c in val):
                     ligne_valide[champ] = "*"
@@ -249,9 +221,8 @@ def transform_type_df(name, data_df):
 
         lignes_valides.append(ligne_valide)
 
-    # --------- Rapport console ---------
     affiche_outcome(
         name, "Toutes les lignes sont vérifiées, absence de champ invalide.", erreurs
     )
-    # --------- Retour du DataFrame nettoyé ---------
+
     return pd.DataFrame(lignes_valides)

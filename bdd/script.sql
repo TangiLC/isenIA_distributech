@@ -31,20 +31,15 @@ CREATE TABLE IF NOT EXISTS log_production_brut (
     nom_fichier TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS log_etl_operations (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    log_date DATETIME,
-    content TEXT NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS production (
     production_id INTEGER AUTO_INCREMENT PRIMARY KEY ,
+    production_ref INTEGER,
     log_id INTEGER,
     FOREIGN KEY (log_id) REFERENCES log_production_brut(id),
     date_production DATE
 );
 
-CREATE TABLE IF NOT EXISTS produit_production (
+CREATE TABLE IF NOT EXISTS production_produit (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     production_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
@@ -79,7 +74,7 @@ CREATE TABLE IF NOT EXISTS stock (
     quantity INT,
     movement INT NOT NULL,
     operator_id INT,
-    FOREIGN KEy (operator_id) REFERENCES revendeur(revendeur_id)
+    FOREIGN KEY (operator_id) REFERENCES revendeur(revendeur_id),
     FOREIGN KEY (product_id) REFERENCES produit(product_id)
 );
 
@@ -88,8 +83,8 @@ CREATE INDEX idx_revendeur_region ON revendeur(region_id);
 CREATE INDEX idx_production_log ON production(log_id);
 CREATE INDEX idx_commande_log ON commande(log_id);
 CREATE INDEX idx_commande_revendeur ON commande(revendeur_id);
-CREATE INDEX idx_produit_production_pid ON produit_production(production_id);
-CREATE INDEX idx_produit_production_produit ON produit_production(product_id);
+CREATE INDEX idx_production_produit_pid ON production_produit(production_id);
+CREATE INDEX idx_production_produit_produit ON production_produit(product_id);
 CREATE INDEX idx_commande_produit_commande ON commande_produit(commande_id);
 CREATE INDEX idx_commande_produit_produit ON commande_produit(product_id);
 CREATE INDEX idx_stock_product ON stock(product_id);

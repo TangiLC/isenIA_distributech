@@ -1,16 +1,25 @@
 import pandas as pd
 from datetime import datetime, date
 
-from scripts.requetes_sql import get_product_unit_prices, get_revendeur_region
+from scripts.requetes_sql import (
+    check_commande_already_exists,
+    check_production_already_exists,
+    get_product_unit_prices,
+    get_revendeur_region,
+)
 from scripts.affichage import affiche_success_ligne, affiche_outcome
 
 
-#########  TRANSFORM COHERENCE NUMERO COMMANDE ################################
-# Validation des cohérences des colonnes du dataframe
-# suppression de ligne en cas d'incohérence non corrigible
-# Paramètre d'entrée : dataframe
-# Sortie : dataframe corrigée
+###############################################################################
 def transform_coherence_commande_df(name, data_df):
+    """Correction du numéro de commande pour correspondre au schéma CMD-YYYYMMDD-nnn
+        correction de la syntaxe et cohérence avec la date de commande
+    Args:
+        name (lst): [nom du fichier csv, id du log]
+        data_df (dataframe): données csv extraites en dataframe (Pandas)
+    Returns:
+        df corrigé(dataframe): données corrigées
+    """
     erreurs = []
     lignes_valides = []
 
@@ -73,12 +82,15 @@ def transform_coherence_commande_df(name, data_df):
     return data_df
 
 
-#########  TRANSFORM COHERENCE REVENDEUR ######################################
-# Validation des cohérences des colonnes du dataframe
-# suppression de ligne en cas d'incohérence non corrigible
-# Paramètre d'entrée : dataframe
-# Sortie : dataframe corrigée
+###############################################################################
 def transform_coherence_revendeur_df(name, data_df):
+    """Correction de la région du revendeur selon les données en BDD
+    Args:
+        name (lst): [nom du fichier csv, id du log]
+        data_df (dataframe): données csv extraites en dataframe (Pandas)
+    Returns:
+        df corrigé(dataframe): données corrigées
+    """
     # cohérence paire revendeur_id/region_id et existe
     # (Choix arbitraire: confiance revendeur_id)
     erreurs = []
@@ -87,7 +99,7 @@ def transform_coherence_revendeur_df(name, data_df):
     # Vérifie que les colonnes nécessaires sont présentes
     # Traitement uniquement si les deux colonnes sont présentes
     if {"revendeur_id", "region_id"}.issubset(data_df.columns):
-        revendeur_region_map = get_revendeur_region()  # TO DO limiter requetes
+        revendeur_region_map = get_revendeur_region()
 
         for index, ligne in data_df.iterrows():
             ligne_dict = ligne.to_dict()
@@ -129,19 +141,22 @@ def transform_coherence_revendeur_df(name, data_df):
     return data_df
 
 
-#########  TRANSFORM COHERENCE PRIX UNITAIRE ##################################
-# Validation des cohérences des colonnes du dataframe
-# suppression de ligne en cas d'incohérence non corrigible
-# Paramètre d'entrée : dataframe
-# Sortie : dataframe corrigée
+###############################################################################
 def transform_coherence_prix_unitaire_df(name, data_df):
+    """Correction du prix unitaire en commande selon les données en BDD
+    Args:
+        name (lst): [nom du fichier csv, id du log]
+        data_df (dataframe): données csv extraites en dataframe (Pandas)
+    Returns:
+        df corrigé(dataframe): données corrigées
+    """
     # cohérence paire cout_unitaire/unit_price et existe
     # (Choix arbitraire: confiance BDD cout_unitaire)
     erreurs = []
     lignes_valides = []
 
     if {"product_id", "unit_price"}.issubset(data_df.columns):
-        product_price_map = get_product_unit_prices()  # TO DO limiter requetes
+        product_price_map = get_product_unit_prices()
 
         for index, ligne in data_df.iterrows():
             ligne_dict = ligne.to_dict()
@@ -199,12 +214,15 @@ def transform_coherence_prix_unitaire_df(name, data_df):
     return data_df
 
 
-#########  TRANSFORM COHERENCE QUANTITE ##################################
-# Validation des cohérences des colonnes du dataframe
-# suppression de ligne en cas d'incohérence non corrigible
-# Paramètre d'entrée : dataframe
-# Sortie : dataframe corrigée
+###############################################################################
 def transform_coherence_quantity_df(name, data_df):
+    """Correction de la cohérence des quantités en commande (>0)
+    Args:
+        name (lst): [nom du fichier csv, id du log]
+        data_df (dataframe): données csv extraites en dataframe (Pandas)
+    Returns:
+        df corrigé(dataframe): données corrigées
+    """
     erreurs = []
 
     if "quantity" in data_df.columns:
@@ -230,3 +248,94 @@ def transform_coherence_quantity_df(name, data_df):
 
     # Colonne manquante
     return data_df
+
+
+###############################################################################
+def transform_coherence_historique_df(name, data_df):
+    """Correction de la cohérence des commande et production :
+    absence de doublon de commande/production en BDD (selon refs)
+    Args:
+        name (lst): [nom du fichier csv, id du log]
+        data_df (dataframe): données csv extraites en dataframe (Pandas)
+    Returns:
+        df corrigé(dataframe): données corrigées
+    """
+
+    erreurs = []
+    lignes_valides = []
+
+    if {"numero_commande", "product_id"}.issubset(data_df.columns):
+        for index, ligne in data_df.iterrows():
+            ligne_dict = ligne.to_dict()
+            numero_commande = ligne_dict.get("numero_commande")
+            product_id = ligne_dict.get("product_id")
+
+            if check_commande_already_exists(numero_commande, product_id):
+                ref = {
+                    "name": name,
+                    "ligne": index + 2,
+                    "champ": ["numero_commande", "product_id"],
+                }
+                affiche_success_ligne(
+                    ref,
+                    "e commande déjà existante en base",
+                    None,
+                    f"{numero_commande} / {product_id}",
+                )
+                erreurs.append(
+                    {
+                        "ligne": index + 2,
+                        "erreur": "commande déjà existante",
+                        "champs_erreurs": ["numero_commande", "product_id"],
+                        "data": ligne_dict,
+                    }
+                )
+            else:
+                lignes_valides.append(ligne_dict)
+
+    elif {"production_id", "product_id", "date_production"}.issubset(data_df.columns):
+        for index, ligne in data_df.iterrows():
+            ligne_dict = ligne.to_dict()
+            production_id = ligne_dict.get("production_id")
+            product_id = ligne_dict.get("product_id")
+            production_date = ligne_dict.get("date_production")
+
+            if check_production_already_exists(
+                production_id, product_id, production_date
+            ):
+                ref = {
+                    "name": name,
+                    "ligne": index + 2,
+                    "champ": ["production_id", "product_id", "date_production"],
+                }
+                affiche_success_ligne(
+                    ref,
+                    "e production déjà existante en base",
+                    None,
+                    f"{production_id} / {product_id} / {production_date}",
+                )
+                erreurs.append(
+                    {
+                        "ligne": index + 2,
+                        "erreur": "production déjà existante",
+                        "champs_erreurs": [
+                            "production_id",
+                            "product_id",
+                            "date_production",
+                        ],
+                        "data": ligne_dict,
+                    }
+                )
+            else:
+                lignes_valides.append(ligne_dict)
+
+    else:
+        return data_df
+
+    affiche_outcome(
+        name,
+        "Vérification doublons historique commande/production terminée.",
+        erreurs,
+    )
+
+    return pd.DataFrame(lignes_valides)

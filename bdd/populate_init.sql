@@ -31,23 +31,3 @@ INSERT INTO produit (product_id, product_name, cout_unitaire) VALUES
     (109, 'Souris ergonomique', 39.90),
     (110, 'Station d’accueil', 109.90);
 
--- Insertion de la production (réapprovisionnement)
-INSERT INTO production (production_id, date_production) VALUES
-    (1, '2025-07-01'),
-    (2, '2025-07-02'),
-    (3, '2025-07-03'),
-    (4, '2025-07-04'),
-    (5, '2025-07-05');
-
--- Étape 2 : lier les produits aux productions dans produit_production
-INSERT INTO produit_production (production_id, product_id, quantity) VALUES
-    (1, 101, 50),  
-    (1, 102, 80),  
-    (2, 103, 40),  
-    (2, 104, 60),  
-    (3, 105, 20), 
-    (3, 106, 35),  
-    (4, 107, 25),  
-    (4, 108, 30),  
-    (5, 109, 45),  
-    (5, 110, 15);  

@@ -7,17 +7,28 @@ import os
 
 load_dotenv()
 
-# Nous nous connectons à mySQL
-connexion = mysql.connector.connect(
-    host=os.getenv("BDD_HOST"),
-    port=os.getenv("BDD_PORT"),
-    user=os.getenv("BDD_USER"),
-    password=os.getenv("BDD_PASSWORD"),
-    database=os.getenv("BDD_NAME"),
-)
 
-try:
-    with connexion.cursor() as curseur:
+def init_connection():
+    """Initialisation de la connection mysql-connector
+    Returns:
+        connector.connect: le connecteur actif
+    """
+    return mysql.connector.connect(
+        host=os.getenv("BDD_HOST"),
+        port=os.getenv("BDD_PORT"),
+        user=os.getenv("BDD_USER"),
+        password=os.getenv("BDD_PASSWORD"),
+        database=os.getenv("BDD_NAME"),
+    )
+
+
+def extraire_stock():
+    # Nous nous connectons à mySQL
+
+    try:
+        conn = init_connection()
+        cursor = conn.cursor()
+
         # Nous lancons une requête SQL pour recevoir notr dernier stock par produit
         requete = """
         SELECT s.product_id, s.quantity, s.stock_date, p.product_name
@@ -32,19 +43,27 @@ try:
         """
 
         # Nous exécutons notre requête et nous récupérons toutes les lignes retournées par la requête SQL dans une liste de tuples.
-        curseur.execute(requete)
-        resultats = curseur.fetchall()
+        cursor.execute(requete)
+        resultats = cursor.fetchall()
 
         # Nous récupérons des noms de colonnes pour pouvoir les écrire comme en-tête dans le CSV.
-        colonnes = [desc[0] for desc in curseur.description]
+        colonnes = [desc[0] for desc in cursor.description]
 
         # Nous créons notre CSV avec les données d'état actuel de stock
         now = datetime.now().strftime("%Y%m%d")
-        filename = f"{now}_stock_final.csv"
-        with open(filename, 'w', newline='', encoding='utf-8') as fichier_csv:
+        os.makedirs("exports", exist_ok=True)
+        filename = os.path.join("exports", f"{now}_stock_final_produit.csv")
+        with open(filename, "w", newline="", encoding="utf-8") as fichier_csv:
             writer = csv.writer(fichier_csv)
-            writer.writerow(colonnes)       # On écrit l'entête
-            writer.writerows(resultats)     # On écrit les lignes
+            writer.writerow(colonnes)  # On écrit l'entête
+            writer.writerows(resultats)  # On écrit les lignes
 
-        print("✅ Le fichier CSV du stock a été généré avec succès.")
-except
+        print("✅ Le fichier CSV du stock par produit a été généré avec succès.")
+
+        # conn.commit()
+        cursor.close()
+        conn.close()
+
+    except mysql.connector.Error as err:
+        print(f"❌ Erreur lors de l'insertion du log : {err}")
+        return None
