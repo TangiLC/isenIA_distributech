@@ -47,7 +47,7 @@ def main():
         df_type.append((data[0], dsv))
 
     ### 2.3 Transformation : Gestion des valeurs manquantes
-    title = ">TRANSFORMATION : Correction des valeurs manquantes / aberrentes".ljust(
+    title = ">TRANSFORMATION : Correction des valeurs manquantes / aberrantes".ljust(
         110
     )
     affiche_titre(title)
