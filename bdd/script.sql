@@ -31,6 +31,12 @@ CREATE TABLE IF NOT EXISTS log_production_brut (
     nom_fichier TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS log_etl_operations (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    log_date DATETIME,
+    content TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS production (
     production_id INTEGER AUTO_INCREMENT PRIMARY KEY ,
     log_id INTEGER,

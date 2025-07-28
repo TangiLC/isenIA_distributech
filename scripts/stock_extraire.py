@@ -2,17 +2,18 @@ from dotenv import load_dotenv
 import mysql.connector
 from datetime import datetime
 import csv
+import os
 
 
 load_dotenv()
 
 # Nous nous connectons à mySQL
 connexion = mysql.connector.connect(
-    host='localhost',
-    user=BDD_USER,
-    password=BDD_PASSWORD,
-    database=BDD_NAME,
-    port=3306
+    host=os.getenv("BDD_HOST"),
+    port=os.getenv("BDD_PORT"),
+    user=os.getenv("BDD_USER"),
+    password=os.getenv("BDD_PASSWORD"),
+    database=os.getenv("BDD_NAME"),
 )
 
 try:
@@ -38,11 +39,12 @@ try:
         colonnes = [desc[0] for desc in curseur.description]
 
         # Nous créons notre CSV avec les données d'état actuel de stock
-            now = datetime.now().strftime("%Y%m%d")
-            filename = f"{now}_stock_final.csv"
-            with open(filename, 'w', newline='', encoding='utf-8') as fichier_csv:
+        now = datetime.now().strftime("%Y%m%d")
+        filename = f"{now}_stock_final.csv"
+        with open(filename, 'w', newline='', encoding='utf-8') as fichier_csv:
             writer = csv.writer(fichier_csv)
             writer.writerow(colonnes)       # On écrit l'entête
             writer.writerows(resultats)     # On écrit les lignes
 
         print("✅ Le fichier CSV du stock a été généré avec succès.")
+except

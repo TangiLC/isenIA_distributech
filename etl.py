@@ -3,8 +3,10 @@ from scripts.extracts import extract_csv_to_df, extract_sqlite_to_df
 from scripts.transf_coherence import (
     transform_coherence_commande_df,
     transform_coherence_prix_unitaire_df,
+    transform_coherence_quantity_df,
     transform_coherence_revendeur_df,
 )
+from scripts.transf_unicite import nettoyer_dataframe_unicite
 from scripts.transforms import (
     transform_data_vide_df,
     transform_type_df,
@@ -54,17 +56,22 @@ def main():
         t0 = transform_coherence_commande_df(data[0], data[1])
         t1 = transform_coherence_prix_unitaire_df(data[0], t0)
         t2 = transform_coherence_revendeur_df(data[0], t1)
-        df_complet.append((data[0], t2))
+        t3 = transform_coherence_quantity_df(data[0], t2)
+        df_complet.append((data[0], t3))
 
     ### 2.4 Transformation : Suppression des doublons
     title = ">TRANSFORMATION : Contrôle unicité et suppression des doublons".ljust(110)
     affiche_titre(title)
     df_unique = []
+    for data in df_complet:
+        df_unicite = nettoyer_dataframe_unicite(data[0], data[1])
+        df_unique.append((data[0], df_unicite))
 
     ### 3 LOAD
     title = ">LOAD : sauvegarde des logs dans la BDD".ljust(110)
     affiche_titre(title)
-    df_final = []
+    for data in df_unique:
+        print(data[1])
 
 
 if __name__ == "__main__":

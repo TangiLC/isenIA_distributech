@@ -107,6 +107,7 @@ def transform_coherence_revendeur_df(name, data_df):
                         ref, "e cohérence revendeur/region", region_id, region_bdd
                     )
                     ligne_coherente["region_id"] = region_bdd
+                lignes_valides.append(ligne_coherente)
             else:
                 ligne_erreurs.append("revendeur_id")
                 erreurs.append(
@@ -117,8 +118,6 @@ def transform_coherence_revendeur_df(name, data_df):
                         "data": ligne_dict,
                     }
                 )
-
-            lignes_valides.append(ligne_coherente)
 
         affiche_outcome(
             name,
@@ -197,4 +196,37 @@ def transform_coherence_prix_unitaire_df(name, data_df):
         return pd.DataFrame(lignes_valides)
 
     # Pas de colonnes concernées
+    return data_df
+
+
+#########  TRANSFORM COHERENCE QUANTITE ##################################
+# Validation des cohérences des colonnes du dataframe
+# suppression de ligne en cas d'incohérence non corrigible
+# Paramètre d'entrée : dataframe
+# Sortie : dataframe corrigée
+def transform_coherence_quantity_df(name, data_df):
+    erreurs = []
+
+    if "quantity" in data_df.columns:
+        lignes_invalides = data_df[data_df["quantity"] <= 0]
+
+        for index, ligne in lignes_invalides.iterrows():
+            erreurs.append(
+                {
+                    "ligne": index + 2,
+                    "erreur": "quantity doit être strictement positif",
+                    "champs_erreurs": ["quantity"],
+                    "data": ligne.to_dict(),
+                }
+            )
+
+        affiche_outcome(
+            name,
+            "Toutes les lignes sont vérifiées, cohérence quantité assurée.",
+            erreurs,
+        )
+
+        return data_df[data_df["quantity"] > 0]
+
+    # Colonne manquante
     return data_df
