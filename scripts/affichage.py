@@ -28,13 +28,13 @@ def affiche_titre(title):
 def affiche_success_ligne(ref, transform_type, before, after):
     """Affichage du du message en fin de traitement ligne
     Args :
-        ref (objet références du fichier/ligne/champ),
+        ref (objet références du fichier:name/ligne/champ),
         transform_type (string) : information sur le traitement transform,
         before : élément avant correction,
         after : élément après correction
     Returns : null
     """
-    reference = f"[{ref['name'].upper()}]>Ligne{ref['ligne']}|{ref['champ']}"
+    reference = f"[{str(ref['name']).upper()}]>Ligne{ref['ligne']}|{ref['champ']}"
     colored_text = display_variation(str(before), str(after))
     print(f"✅ {reference}: Correction d{transform_type} dans : '{colored_text}'")
 
