@@ -50,6 +50,7 @@ def insert_into_bddlogs(path, table):
         return None
 
 
+###############################################################################
 def get_revendeur_region():
     """Requête pour créeer un dictionnaire de relations revendeur/region
     Returns:

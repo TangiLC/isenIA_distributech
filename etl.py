@@ -1,20 +1,20 @@
 import os
 from scripts.affichage import affiche_titre
 from scripts.extracts import extract_csv_to_df, extract_sqlite_to_df, get_list_of_files
-from scripts.load_commande_production import (
+from scripts.load import (
     load_commande_produit,
     load_production_produit,
 )
 from scripts.stock_extraire import extraire_stock
-from scripts.transf_coherence import (
+from scripts.transform_phase2 import (
     transform_coherence_commande_df,
     transform_coherence_historique_df,
     transform_coherence_prix_unitaire_df,
     transform_coherence_quantity_df,
     transform_coherence_revendeur_df,
 )
-from scripts.transf_unicite import nettoyer_dataframe_unicite
-from scripts.transforms import (
+from scripts.transform_phase3 import nettoyer_dataframe_unicite
+from scripts.transform_phase1 import (
     transform_data_vide_df,
     transform_type_df,
 )

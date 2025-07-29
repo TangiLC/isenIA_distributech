@@ -21,7 +21,7 @@ def init_connection():
 
 ###############################################################################
 def insert_commande_product(log_id, comm):
-    """Ajout d'une commande dans la base MySQL, avec relations
+    """Ajout d'une commande dans la base production MySQL, avec relations
     Args:
         log_id (int): id de référence du fichier commande en archive logs
         comm(dict): les données de commande à insérer
@@ -129,6 +129,7 @@ def update_stock_produit(stock, plus_minus):
         cursor.execute(get_last_stock, (stock["product_id"],))
         result = cursor.fetchone()
         last_quantity = result[0] if result else 0
+        # la nouvelle quantité vaut l'ancienne +/- le mouvement
         new_stock = last_quantity + plus_minus * stock["movement"]
         insert_stock = """INSERT INTO stock (stock_date,product_id,movement,quantity,operator_id)
         VALUES (%s,%s,%s,%s,%s)
@@ -187,7 +188,7 @@ def load_production_produit(name, data_df):
             "stock_date": prod["date_production"],
             "product_id": prod["product_id"],
             "movement": prod["quantity"],
-            "operator_id": None,
+            "operator_id": None,  # l'opérateur est null pour le réapprovisionnement (production)
         }
         success = insert_production_product(name[1], prod)
 

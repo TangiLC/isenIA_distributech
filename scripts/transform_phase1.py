@@ -21,8 +21,8 @@ def transform_data_vide_df(name, data_df):
     """Correction ou suppression des données vides
         ajout de '*' en cas de données vides pour correction ultérieure,
         suppression de ligne trop courte
-
-    name (lst): [nom du fichier csv, id du log]
+    Args :
+        name (lst): [nom du fichier csv, id du log]
         data_df (dataframe): données csv extraites en dataframe (Pandas)
     Returns:
         df corrigé(dataframe): données corrigées
@@ -40,7 +40,7 @@ def transform_data_vide_df(name, data_df):
         ligne_dict = ligne.to_dict()
         valeurs = list(ligne_dict.values())
 
-        # Vérification 1 : ligne avec un mauvais nombre de colonnes
+        # Vérification 1 : ligne avec un mauvais nombre de colonnes (colonne manquantes)
         if len(valeurs) < len(champs_obligatoires) or pd.isnull(valeurs[-1]):
             # TO DO : Moyen de reconstituer une valeur manquante avec décalage des colonnes ?
             erreurs.append(
