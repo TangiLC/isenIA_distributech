@@ -32,7 +32,7 @@ def extraire_stock():
         # Extraction des données des vues MySQL et export au format CSV pour obtenir le dernier état des stocks par produit et par revendeur.
         vues = {
             "stock_final_produit": "vue_stock_final_produit",
-            "stock_final_revendeur": "vue_stock_final_revendeur"
+            "stock_final_revendeur": "vue_stock_final_revendeur",
         }
 
         for label, vue in vues.items():
@@ -53,12 +53,16 @@ def extraire_stock():
                 writer.writerow(colonnes)  # On écrit l'entête
                 writer.writerows(resultats)  # On écrit les lignes
 
-            print(f"✅ Le fichier CSV du {label.replace('_', ' ').title()} a été généré avec succès.")
+            print(
+                f"✅ Le fichier CSV du {label.replace('_', ' ').title()} a été généré avec succès."
+            )
 
         # Fermeture du curseur pour libérer la mémoire et les ressources utilisées par ce curseur.
         cursor.close()
         conn.close()
 
     except mysql.connector.Error as err:
-        print(f"❌ Échec de l'extraction des données depuis la base MySQL. Détail de l'erreur : {err}")
+        print(
+            f"❌ Échec de l'extraction des données depuis la base MySQL. Détail de l'erreur : {err}"
+        )
         return None
