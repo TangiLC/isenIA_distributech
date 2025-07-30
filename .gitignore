@@ -1,2 +1,13 @@
-/.dtvenv
+/.venv
 /bdd/db
+/output_csv
+/scripts/__pycache__
+/scripts/utils/__pycache__
+/output_csv
+/.dtvenv
+/logs_csv
+/exports
+/data
+.env
+.coverage
+**/__pycache__/
