@@ -23,59 +23,42 @@ def init_connection():
 
 
 def extraire_stock():
-    # Nous nous connectons à mySQL
+    # Connexion à la base de données MySQL
 
     try:
         conn = init_connection()
         cursor = conn.cursor()
 
-        # Nous lancons une requête SQL pour recevoir notr dernier stock par produit
-        requete = """
-        SELECT s.stock_date,s.product_id, p.product_name, s.quantity, 
-        COALESCE(r.revendeur_name, 'Distributech') AS operateur,
-        CASE WHEN s.operator_id IS NULL THEN s.movement
-           ELSE -1 * s.movement END AS mouvement
-        FROM stock s
-        JOIN produit p ON s.product_id = p.product_id
-        JOIN (
-            SELECT product_id, MAX(stock_date) AS last_date
-            FROM stock
-            GROUP BY product_id
-        ) latest
-        ON s.product_id = latest.product_id AND s.stock_date = latest.last_date
-        JOIN revendeur r ON s.operator_id = r.revendeur_id;
-        """
+        # Extraction des données des vues MySQL et export au format CSV pour obtenir le dernier état des stocks par produit et par revendeur.
+        vues = {
+            "stock_final_produit": "vue_stock_final_produit",
+            "stock_final_revendeur": "vue_stock_final_revendeur"
+        }
 
-        # Nous exécutons notre requête et nous récupérons toutes les lignes retournées par la requête SQL dans une liste de tuples.
-        cursor.execute(requete)
-        resultats = cursor.fetchall()
+        for label, vue in vues.items():
+            # Construction de la requête SQL pour interroger la vue.
+            requete = f"SELECT * FROM {vue};"
+            # Exécution de la requête et récupération de toutes les lignes retournées.
+            cursor.execute(requete)
+            resultats = cursor.fetchall()
+            # Récupération des noms de colonnes pour les utiliser comme en-têtes dans le fichier CSV.
+            colonnes = [desc[0] for desc in cursor.description]
 
-        # Nous récupérons des noms de colonnes pour pouvoir les écrire comme en-tête dans le CSV.
-        colonnes = [desc[0] for desc in cursor.description]
+            # Création du fichier CSV avec les données actuelles des stocks.
+            now = datetime.now().strftime("%Y%m%d")
+            os.makedirs("exports", exist_ok=True)
+            filename = os.path.join("exports", f"{now}_{label}.csv")
+            with open(filename, "w", newline="", encoding="utf-8") as fichier_csv:
+                writer = csv.writer(fichier_csv)
+                writer.writerow(colonnes)  # On écrit l'entête
+                writer.writerows(resultats)  # On écrit les lignes
 
-        # Nous créons notre CSV avec les données d'état actuel de stock
-        now = datetime.now().strftime("%Y%m%d")
-        os.makedirs("exports", exist_ok=True)
-        filename = os.path.join("exports", f"{now}_stock_final_produit.csv")
-        with open(filename, "w", newline="", encoding="utf-8") as fichier_csv:
-            writer = csv.writer(fichier_csv)
-            writer.writerow(colonnes)  # On écrit l'entête
-            writer.writerows(resultats)  # On écrit les lignes
+            print(f"✅ Le fichier CSV du {label.replace('_', ' ').title()} a été généré avec succès.")
 
-        print("✅ Le fichier CSV du stock par revendeur a été généré avec succès.")
-
-        filename = os.path.join("exports", f"{now}_stock_final_revendeur.csv")
-        with open(filename, "w", newline="", encoding="utf-8") as fichier_csv:
-            writer = csv.writer(fichier_csv)
-            writer.writerow(colonnes)  # On écrit l'entête
-            writer.writerows(resultats)  # On écrit les lignes
-
-        print("✅ Le fichier CSV du stock par produit a été généré avec succès.")
-
-        # conn.commit()
+        # Fermeture du curseur pour libérer la mémoire et les ressources utilisées par ce curseur.
         cursor.close()
         conn.close()
 
     except mysql.connector.Error as err:
-        print(f"❌ Erreur lors de l'insertion du log : {err}")
+        print(f"❌ Échec de l'extraction des données depuis la base MySQL. Détail de l'erreur : {err}")
         return None

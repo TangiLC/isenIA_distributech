@@ -92,4 +92,37 @@ CREATE INDEX idx_production_date ON production(date_production);
 CREATE INDEX idx_commande_date ON commande(commande_date);
 CREATE INDEX idx_stock_date ON stock(stock_date);
 
---CREATE VIEW #Gosia
+---- CREATION VIEW : une vue du stock final par produit et une vue du stock final par revendeur
+-- Une vue du stock final par produit
+
+CREATE OR REPLACE VIEW vue_stock_final_produit AS
+SELECT s.stock_date, s.product_id, p.product_name, s.quantity, 
+    COALESCE(r.revendeur_name, 'Distributech') AS operateur,
+    CASE WHEN s.operator_id IS NULL THEN s.movement
+        ELSE -1 * s.movement END AS mouvement
+    FROM stock s
+    JOIN produit p ON s.product_id = p.product_id
+    JOIN (
+    SELECT product_id, MAX(stock_date) AS last_date
+    FROM stock
+    GROUP BY product_id
+) latest
+ON s.product_id = latest.product_id AND s.stock_date = latest.last_date
+LEFT JOIN revendeur r ON s.operator_id = r.revendeur_id; -- LEFT JOIN revendeur permet de ne pas perdre de données produits, même sans revendeur.
+
+-- Une vue du stock final par revendeur
+
+CREATE OR REPLACE VIEW vue_stock_final_revendeur AS
+SELECT s.stock_date, s.product_id, p.product_name, s.quantity, 
+    COALESCE(r.revendeur_name, 'Distributech') AS operateur,
+    CASE WHEN s.operator_id IS NULL THEN s.movement
+        ELSE -1 * s.movement END AS mouvement
+    FROM stock s
+    JOIN produit p ON s.product_id = p.product_id
+    JOIN (
+    SELECT product_id, MAX(stock_date) AS last_date
+    FROM stock
+    GROUP BY product_id, operator_id
+) latest
+ON s.product_id = latest.product_id AND s.stock_date = latest.last_date AND s.operateur <=> latest.operateur  -- <=> signifie en MySQL égalité NULL-safe et permet que les lignes où operator_id est NULL soient correctement appariées dans la jointure.
+LEFT JOIN revendeur r ON s.operator_id = r.revendeur_id; --  LEFT JOIN revendeur permets d'inclure aussi les stocks sans revendeur (par ex. gérés directement en futur par Distributech)
