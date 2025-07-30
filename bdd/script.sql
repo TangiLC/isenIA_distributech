@@ -96,7 +96,7 @@ CREATE INDEX idx_stock_date ON stock(stock_date);
 -- Une vue du stock final par produit
 
 CREATE OR REPLACE VIEW vue_stock_final_produit AS
-SELECT s.stock_date, s.product_id, p.product_name, s.quantity, 
+SELECT s.product_id, s.stock_date, p.product_name, s.quantity, 
     COALESCE(r.revendeur_name, 'Distributech') AS operateur,
     CASE WHEN s.operator_id IS NULL THEN s.movement
         ELSE -1 * s.movement END AS mouvement
@@ -115,8 +115,8 @@ LEFT JOIN revendeur r ON s.operator_id = r.revendeur_id;
 -- Une vue du stock final par revendeur
 
 CREATE OR REPLACE VIEW vue_stock_final_revendeur AS
-SELECT s.stock_date, s.product_id, p.product_name, s.quantity, 
-    COALESCE(r.revendeur_name, 'Distributech') AS operateur,
+SELECT COALESCE(r.revendeur_name, 'Distributech') AS operateur,
+    s.stock_date, s.product_id, p.product_name, s.quantity, 
     CASE WHEN s.operator_id IS NULL THEN s.movement
         ELSE -1 * s.movement END AS mouvement
     FROM stock s
@@ -133,3 +133,64 @@ AND (
         OR (s.operator_id IS NULL AND latest.operator_id IS NULL)
     )
 LEFT JOIN revendeur r ON s.operator_id = r.revendeur_id; 
+
+
+
+CREATE OR REPLACE VIEW vue_historique_stock_par_revendeur AS
+SELECT
+    COALESCE(reg.region_name, 'Distributech') AS region,
+    COALESCE(r.revendeur_name, 'Distributech') AS operateur,
+    s0.product_id,
+    p.product_name,
+    COALESCE(s2.movement, 0) AS movement_2,
+    COALESCE(s2.stock_date, '2020-01-01') AS date_2,
+    COALESCE(s1.movement, 0) AS movement_1,
+    COALESCE(s1.stock_date, '2020-01-01') AS date_1,
+    s0.movement AS movement_0,
+    s0.stock_date AS latest_date
+FROM (
+    -- Les 3 derniers enregistrements par produit/opérateur
+    SELECT *,
+           ROW_NUMBER() OVER (PARTITION BY product_id, COALESCE(operator_id, 0) ORDER BY stock_date DESC) AS rn
+    FROM stock
+) ranked
+-- Stock le plus récent (rn = 1)
+JOIN (
+    SELECT *
+    FROM (
+        SELECT *,
+               ROW_NUMBER() OVER (PARTITION BY product_id, COALESCE(operator_id, 0) ORDER BY stock_date DESC) AS rn
+        FROM stock
+    ) sub
+    WHERE rn = 1
+) s0 ON ranked.product_id = s0.product_id 
+    AND COALESCE(ranked.operator_id, 0) = COALESCE(s0.operator_id, 0)
+-- Stock précédent (rn = 2)
+LEFT JOIN (
+    SELECT *
+    FROM (
+        SELECT *,
+               ROW_NUMBER() OVER (PARTITION BY product_id, COALESCE(operator_id, 0) ORDER BY stock_date DESC) AS rn
+        FROM stock
+    ) sub
+    WHERE rn = 2
+) s1 ON ranked.product_id = s1.product_id 
+    AND COALESCE(ranked.operator_id, 0) = COALESCE(s1.operator_id, 0)
+-- Stock d'avant (rn = 3)
+LEFT JOIN (
+    SELECT *
+    FROM (
+        SELECT *,
+               ROW_NUMBER() OVER (PARTITION BY product_id, COALESCE(operator_id, 0) ORDER BY stock_date DESC) AS rn
+        FROM stock
+    ) sub
+    WHERE rn = 3
+) s2 ON ranked.product_id = s2.product_id 
+    AND COALESCE(ranked.operator_id, 0) = COALESCE(s2.operator_id, 0)
+-- Jointures avec les tables de référence
+JOIN produit p ON s0.product_id = p.product_id
+LEFT JOIN revendeur r ON s0.operator_id = r.revendeur_id
+LEFT JOIN region reg ON r.region_id = reg.region_id
+-- Filtrer pour ne garder qu'une ligne par produit/opérateur
+WHERE ranked.rn = 1
+ORDER BY region, s0.operator_id, s0.product_id;

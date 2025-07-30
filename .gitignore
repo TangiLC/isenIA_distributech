@@ -9,4 +9,5 @@
 /exports
 /data
 .env
+.coverage
 **/__pycache__/

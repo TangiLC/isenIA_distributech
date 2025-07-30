@@ -77,30 +77,47 @@ Ce projet est réalisé en trinôme, les contributeurs sont :
   <img src="https://avatars.githubusercontent.com/TangiLC" width="50" height="50" style="border-radius: 50%;" alt="TangiLC" />
 </a>
 
+### 3. Création du fichier d'environnement et de la base de données
 
-### 3. Création de l’environnement virtuel Python
+Un fichier contenant les données d'environnement de votre BDD est nécessaire à la racine du projet.
+Créer et personnalisez le fichier `.env` selon ce schéma :
+
+```bash
+BDD_HOST=votre-adresse-host (localhost)
+BDD_PORT=votre-port-mysql (3307)
+BDD_USER=votre-nom-user-mysql
+BDD_PASSWORD=votre-mot-de-passe-mysql
+BDD_NAME=votre-nom-de-bdd (distributech)
+```
+
+### 4. Création de l’environnement virtuel Python
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 4. Installation des dépendances
+### 5. Installation des dépendances
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Lancement de la base de données
+### 6. Lancement de la base de données
 
-Dans le dossier `bdd/`, lancer :
+Les fichiers `bdd/script.sql` et `bdd/populate_init.sql` permettent d'initialiser votre base de données.
+
+Alternativement, Dans le dossier `bdd/`, un fichier docker-compose permet de conteneuriser une bdd :
 
 ```bash
 docker-compose up -d
+
 ```
 
-> 📌 La base **MySQL** sera accessible sur le port `3307`  
+> 📌 La base **MySQL** sera alors accessible sur le port `3307`  
 > 🖥 L'interface **Adminer** est disponible via [http://localhost:8081](http://localhost:8081)
+
+ Lancer les scripts d'initialisation depuis l'interface Adminer.
 
 ---
 
@@ -130,15 +147,16 @@ numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_pr
 
 ---
 
-## ✓✓ Tests unitaires
+## ✓✓ Tests unitaires (pytest)
 
+Les bibliothèques *pytest* et *pytest-cov* est configurée avec pytest.ini et .coveragerc.
 Les tests sont à lancer à la racine du projet avec la commande suivante :
 
 ```
 pytest --cov=scripts --cov-report=term --cov-report=html:tests/htmlcov --cov-config=.coveragerc
 ```
 
-Le coverage est évalué par pytest-cov, un objectif >80% est en cours.
+Le coverage sera affiché dans le terminal, avec un objectif >80%.
 Le rapport se trouve dans `/tests/htmlcov`. (page principale `index.html`)
 
 ---
@@ -168,6 +186,7 @@ distributech/
 │   └── test_xxxx.py         # Scripts de tests unitaires pour l'ensemble des fonctions
 ├── requirements.txt         # Dépendances Python
 ├── README.md                # Ce fichier 😄
+├── pytest.ini, .coveragerc  # Fichiers de configuration de l'outil pytest      
 └── .gitignore               # Liste des répertoires ou fichiers non suivis
 ```
 

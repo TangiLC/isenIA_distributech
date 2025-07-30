@@ -7,6 +7,12 @@ import os
 
 load_dotenv()
 
+VUES = {
+    "stock_final_produit": "vue_stock_final_produit",
+    "stock_final_revendeur": "vue_stock_final_revendeur",
+    "historique_par_revendeur": "vue_historique_stock_par_revendeur",
+}
+
 
 def init_connection():
     """Initialisation de la connection mysql-connector
@@ -23,19 +29,19 @@ def init_connection():
 
 
 def extraire_stock():
+    """Récupération des vues dans la BDD avec mysql-connector
+    Création de fichier csv à partir de ces vues
+    """
     # Connexion à la base de données MySQL
 
     try:
         conn = init_connection()
         cursor = conn.cursor()
 
-        # Extraction des données des vues MySQL et export au format CSV pour obtenir le dernier état des stocks par produit et par revendeur.
-        vues = {
-            "stock_final_produit": "vue_stock_final_produit",
-            "stock_final_revendeur": "vue_stock_final_revendeur",
-        }
+        # Extraction des données des vues MySQL et export au format CSV
+        # pour obtenir le dernier état des stocks par produit et par revendeur.
 
-        for label, vue in vues.items():
+        for label, vue in VUES.items():
             # Construction de la requête SQL pour interroger la vue.
             requete = f"SELECT * FROM {vue};"
             # Exécution de la requête et récupération de toutes les lignes retournées.
