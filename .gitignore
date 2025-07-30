@@ -6,6 +6,6 @@
 /.dtvenv
 /logs_csv
 /exports
-
+/data
 .env
 **/__pycache__/
