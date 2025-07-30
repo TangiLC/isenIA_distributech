@@ -3,7 +3,7 @@ import unicodedata
 import re  # lecture du regex
 from datetime import datetime
 
-from scripts.affichage import affiche_success_ligne
+from scripts.utils.affichage import affiche_success_ligne
 
 
 def corriger_ocr(val, ref):

@@ -1,4 +1,4 @@
-from scripts.affichage import affiche_outcome
+from scripts.utils.affichage import affiche_outcome
 
 
 def nettoyer_dataframe_unicite(name, data_df):

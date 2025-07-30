@@ -1,0 +1,14 @@
+[run]
+omit =
+    */tests/*
+    */utils/requetes_sql.py
+    */scripts/__init__.py
+    */bdd/*
+    */__pycache__/*
+    */.dtvenv/*
+    */venv/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:

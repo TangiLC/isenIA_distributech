@@ -4,7 +4,7 @@
 
 Ce projet est un **Proof of Concept (PoC)** académique développé dans le cadre du module *Extraction, Transformation, Chargement (ETL)* de la formation **Développeur IA** ISEN / Simplon.co.
 
-Il a pour but de concevoir un pipeline **ETL automatisé en Python**, permettant l'intégration des données de commandes revendeurs (au format CSV) et de stocks/production (via une base SQLite), dans une **base de données MySQL centralisée**. Le tout est actuellement **sans interface graphique**, en interaction terminale uniquement.
+Il a pour but de concevoir un pipeline **ETL automatisé en Python**, permettant l'intégration des données de commandes revendeurs (au format CSV) et de stocks/production (via une base SQLite), dans une **base de données MySQL centralisée**. L'aboutissement du pipeline est la mise à jour de la base stock, avec création de fichiers csv pour le suivi des stocks par produits et par revendeur. Le tout est actuellement **sans interface graphique**, en interaction terminal uniquement.
 
 Le développement de ce projet a suivi une méthodologie Agile, avec ticketing et feuille de route sur
 [Notion](https://www.notion.so/ba8a83033c684aa798eb9e7c6e2e2ed6).
@@ -24,7 +24,7 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 - Concevoir une base SQL relationnelle orientée gestion logistique (revendeurs, produits, régions, commandes, stocks),
 - Développer un pipeline ETL pour :
   - Extraire les données CSV & SQLite,
-  - Valider et nettoyer les données (cohérence, format, doublons),
+  - Valider et nettoyer les données (cohérence, format, doublons...),
   - Charger les données dans une base **MySQL conteneurisée**,
 - Générer un rapport CSV de l’état des stocks à date,
 - Automatiser le traitement dans une architecture modulaire.
@@ -33,15 +33,20 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 
 ## 🧑‍💻 Stack technique
 
-| Outil / Techno      | Version / Remarques                  |
-|---------------------|--------------------------------------|
-| Python              | ≥ 3.12                               |
+| Outil / Techno         | Version / Remarques                        |
+|------------------------|--------------------------------------------|
+| Python                 | ≥ 3.12                                     |
+| Pandas                 | 2.3 Manipulation de données structurées    |
+| mysql-connector        | 9.3 Bibliothèque d'interaction avec MySQL  |
+| python-dotenv          | chargement des variables d'environnement   |
+| pytest (et pytest-cov) | Bibliothèques de test et couverture        |
 | Docker / Docker Compose | Conteneurisation de la base MySQL + Adminer |
-| MySQL               | 8.0+ – Port 3307                     |
-| Adminer             | Interface DB web – Port 8081         |
-| SQLite              | Stock source                         |
-| CSV                 | Commandes des revendeurs             |
-| VSCode              | Développement local                  |
+| MySQL                  | 8.0+ BDD relationnelle (Port 3307)         |
+| Adminer                | Interface web pour MySQL (Port 8081)       |
+| SQLite                 | Base légère Stock source                   |
+| CSV                    | Fichier Commandes des revendeur            |
+| VSCode                 | IDE de développement local                 |
+
 
 ---
 
@@ -120,26 +125,47 @@ numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_pr
 
 ### 📥 Load
 - Mise à jour de la base MySQL cible via `mysql-connector-python`
-- Génération d’un fichier `.csv` récapitulatif de l’état des stocks à date
+- Génération des fichiers `.csv` récapitulatif de l’état des stocks à date
+- Déplacement des fichiers sources traités
+
+---
+
+## ✓✓ Tests unitaires
+
+Les tests sont à lancer à la racine du projet avec la commande suivante :
+
+```
+pytest --cov=scripts --cov-report=term --cov-report=html:tests/htmlcov --cov-config=.coveragerc
+```
+
+Le coverage est évalué par pytest-cov, un objectif >80% est en cours.
+Le rapport se trouve dans `/tests/htmlcov`. (page principale `index.html`)
 
 ---
 
 ## 🗃 Structure du projet
 
 ```
-etl-revendeurs/
+distributech/
 ├── etl.py                   # Script principal du pipeline (main)
-├── /scripts/
-│   ├── extracts.py          # Scripts pour l'étape Extract
-│   ├── transforms.py        # Scripts pour l'étape Transform
-│   └── loads.py             # Scripts pour l'étape Load
-├── /bdd/
-│   └── docker-compose.yml   # Lancement base MySQL + Adminer
-├── /data/
-│   ├── commandes_X.csv      # Commandes hebdo (source CSV)
-│   └── stocks.sqlite        # Base SQLite (stock de départ)
-├── /sql/
+├── scripts/
+│   ├── extracts.py          # Scripts pour les étapes Extract
+│   ├── transform_xx.py      # Scripts pour les étapes Transform
+│   ├── loads.py             # Scripts pour les étapes Load
+│   ├── generate_report.py   # Scripts pour la génération de l'état des Stocks
+│   └─utils/                 # Scripts annexes (mise en forme, requêtes...)
+├── bdd/
+│   ├── script.sql           # Script de création des tables pour mySQL
+│   ├── populate_init.sql    # Script d'alimentation initiale de la BDD (produits, régions)
+│   └── docker-compose.yml   # Lancement base MySQL + Adminer en container
+├── data/
+│   ├── commandes_xxx.csv    # source CSV (Commandes)
+│   ├── base_stock.sqlite    # Base SQLite (production/réapprovisionnement)
+|   └──archived/             # Dossier archive des fichiers antérieurs
+├── sql/
 │   └── schema.sql           # Script de création des tables pour mySQL
+├── tests/
+│   └── test_xxxx.py         # Scripts de tests unitaires pour l'ensemble des fonctions
 ├── requirements.txt         # Dépendances Python
 ├── README.md                # Ce fichier 😄
 └── .gitignore               # Liste des répertoires ou fichiers non suivis

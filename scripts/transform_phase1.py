@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 
-from scripts.utils import (
+from scripts.utils.utils import (
     corriger_date,
     corriger_ocr,
     nettoyer_numero_commande,
@@ -9,7 +9,7 @@ from scripts.utils import (
     nettoyer_typographie,
 )
 
-from scripts.affichage import affiche_success_ligne, affiche_outcome
+from scripts.utils.affichage import affiche_success_ligne, affiche_outcome
 
 CHAMP_INT = ["production_id", "product_id", "quantity", "region_id", "revendeur_id"]
 CHAMP_FLOAT = ["cout_unitaire", "unit_price"]

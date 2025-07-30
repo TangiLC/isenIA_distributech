@@ -1,7 +1,7 @@
 import pytest
 import sys
 import time
-from scripts.affichage import (
+from scripts.utils.affichage import (
     affiche_outcome,
     affiche_success_ligne,
     affiche_titre,
@@ -9,8 +9,6 @@ from scripts.affichage import (
 )
 
 import re
-
-###test à lancer dans /tests avec la commande pytest --cov=scripts --cov-report=term --cov-report=html
 
 
 def strip_ansi(text):
@@ -98,7 +96,7 @@ def test_affiche_outcome_param(
     capfd, monkeypatch, name, ok_message, erreurs, expected_lines
 ):
     monkeypatch.setattr(
-        "scripts.affichage.afficher_tableau_horizontal",
+        "scripts.utils.affichage.afficher_tableau_horizontal",
         lambda data, champs: print(f"[TABLE] {data} / {champs}"),
     )
 

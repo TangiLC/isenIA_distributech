@@ -1,11 +1,16 @@
 import os
-from scripts.affichage import affiche_titre
-from scripts.extracts import extract_csv_to_df, extract_sqlite_to_df, get_list_of_files
-from scripts.load import (
+from scripts.utils.affichage import affiche_titre
+from scripts.extracts import (
+    extract_csv_to_df,
+    extract_sqlite_to_df,
+    get_list_of_files,
+    move_file_to_target,
+)
+from scripts.loads import (
     load_commande_produit,
     load_production_produit,
 )
-from scripts.stock_extraire import extraire_stock
+from scripts.generate_report import extraire_stock
 from scripts.transform_phase2 import (
     transform_coherence_commande_df,
     transform_coherence_historique_df,
@@ -102,6 +107,11 @@ def main():
     title = ">STOCK : Création des fiches de stock csv à jour".ljust(110)
     affiche_titre(title)
     extraire_stock()
+    ### 5 Deplacer les fichiers traités en archive
+    for sqlite_file in all_files.get("sqlite", []):
+        move_file_to_target(f"{DATA_PATH}{sqlite_file}", f"{DATA_PATH}archived")
+    for csv_file in all_files.get("csv", []):
+        move_file_to_target(f"{DATA_PATH}{csv_file}", f"{DATA_PATH}archived")
 
 
 if __name__ == "__main__":

@@ -2,8 +2,9 @@ import sqlite3
 import pandas as pd
 from datetime import datetime
 import os
+import shutil
 
-from scripts.requetes_sql import insert_into_bddlogs
+from scripts.utils.requetes_sql import insert_into_bddlogs
 
 
 def get_list_of_files(path):
@@ -103,7 +104,7 @@ def extract_sqlite_to_df(db_path, logs_dir="./logs_csv"):
     return dataframes
 
 
-##############################################################################
+###############################################################################
 def anonymize_name(id):
     """anonymisation partiel du nom du revendeur pour éviter de stocker
         des données sensibles en log (RGPD)
@@ -114,3 +115,19 @@ def anonymize_name(id):
     """
     formatted_id = str(id).zfill(3)
     return f"revendeur_{formatted_id}"
+
+
+###############################################################################
+def move_file_to_target(file, target):
+    """
+    Déplace un fichier vers un répertoire cible.
+    Args:
+        file: Chemin complet du fichier source à déplacer
+        path: Chemin du répertoire de destination
+    """
+    os.makedirs(target, exist_ok=True)
+    filename = os.path.basename(file)
+    target_path = os.path.join(target, filename)
+
+    shutil.move(file, target_path)
+    print(f"Le fichier {file} a été archivé vers {target}")

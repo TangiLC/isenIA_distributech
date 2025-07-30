@@ -1,13 +1,13 @@
 import pandas as pd
 from datetime import datetime, date
 
-from scripts.requetes_sql import (
+from scripts.utils.requetes_sql import (
     check_commande_already_exists,
     check_production_already_exists,
     get_product_unit_prices,
     get_revendeur_region,
 )
-from scripts.affichage import affiche_success_ligne, affiche_outcome
+from scripts.utils.affichage import affiche_success_ligne, affiche_outcome
 
 
 ###############################################################################
