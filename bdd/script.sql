@@ -108,7 +108,9 @@ SELECT s.stock_date, s.product_id, p.product_name, s.quantity,
     GROUP BY product_id
 ) latest
 ON s.product_id = latest.product_id AND s.stock_date = latest.last_date
-LEFT JOIN revendeur r ON s.operator_id = r.revendeur_id; -- LEFT JOIN revendeur permet de ne pas perdre de données produits, même sans revendeur.
+LEFT JOIN revendeur r ON s.operator_id = r.revendeur_id; 
+-- LEFT JOIN revendeur permet de ne pas perdre de données produits, même sans revendeur.
+
 
 -- Une vue du stock final par revendeur
 
@@ -120,9 +122,14 @@ SELECT s.stock_date, s.product_id, p.product_name, s.quantity,
     FROM stock s
     JOIN produit p ON s.product_id = p.product_id
     JOIN (
-    SELECT product_id, MAX(stock_date) AS last_date
+    SELECT product_id,operator_id, MAX(stock_date) AS last_date
     FROM stock
     GROUP BY product_id, operator_id
 ) latest
-ON s.product_id = latest.product_id AND s.stock_date = latest.last_date AND s.operateur <=> latest.operateur  -- <=> signifie en MySQL égalité NULL-safe et permet que les lignes où operator_id est NULL soient correctement appariées dans la jointure.
-LEFT JOIN revendeur r ON s.operator_id = r.revendeur_id; --  LEFT JOIN revendeur permets d'inclure aussi les stocks sans revendeur (par ex. gérés directement en futur par Distributech)
+ON s.product_id = latest.product_id 
+AND s.stock_date = latest.last_date 
+AND (
+        s.operator_id = latest.operator_id 
+        OR (s.operator_id IS NULL AND latest.operator_id IS NULL)
+    )
+LEFT JOIN revendeur r ON s.operator_id = r.revendeur_id; 

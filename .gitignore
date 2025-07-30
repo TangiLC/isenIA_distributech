@@ -2,6 +2,7 @@
 /bdd/db
 /output_csv
 /scripts/__pycache__
+/scripts/utils/__pycache__
 /output_csv
 /.dtvenv
 /logs_csv
