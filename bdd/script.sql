@@ -92,4 +92,4 @@ CREATE INDEX idx_production_date ON production(date_production);
 CREATE INDEX idx_commande_date ON commande(commande_date);
 CREATE INDEX idx_stock_date ON stock(stock_date);
 
-CREATE VIEW #Gosia
+--CREATE VIEW #Gosia

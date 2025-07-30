@@ -91,7 +91,7 @@ def nettoyer_typographie(texte, ref):
     """
     temp_texte = str(texte)
     remplacements = {
-        "'": "'",  # apostrophe courbe vers droite
+        "’": "'",  # apostrophe courbe vers droite
         """: '"',
         """: '"',
         "«": '"',
