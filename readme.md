@@ -83,7 +83,7 @@ Ce projet est réalisé en trinôme, les contributeurs sont :
 ### 3. Création du fichier d'environnement et de la base de données
 
 Un fichier contenant les données d'environnement de votre BDD est nécessaire à la racine du projet.
-Créer et personnalisez le fichier `.env` selon ce schéma ou copier/renommer le fichier `env.template`:
+Créer et personnalisez le fichier `.env` selon ce schéma ou copier/renommer le fichier `.env.template`:
 
 ```bash
 BDD_HOST=votre-adresse-host (localhost)
