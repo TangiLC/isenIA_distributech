@@ -92,6 +92,12 @@ CREATE INDEX idx_production_date ON production(date_production);
 CREATE INDEX idx_commande_date ON commande(commande_date);
 CREATE INDEX idx_stock_date ON stock(stock_date);
 
+-- VERIFICATION que les tables de base existent
+SELECT table_name 
+FROM information_schema.tables 
+WHERE table_schema = 'distributech'
+  AND table_name IN ('stock', 'produit', 'revendeur', 'region');
+
 ---- CREATION VIEW : une vue du stock final par produit et une vue du stock final par revendeur
 -- Une vue du stock final par produit
 
