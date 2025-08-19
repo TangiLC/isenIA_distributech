@@ -147,6 +147,12 @@ numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_pr
 
 ---
 
+## 🧬 Schéma du pipeline ETL
+
+![Schéma du pipeline ETL](C:\Users\User\Desktop\TopExpertIABoost\Projets\Distributech\schema)
+
+---
+
 ## ✓✓ Tests unitaires (pytest)
 
 Les bibliothèques *pytest* et *pytest-cov* est configurée avec pytest.ini et .coveragerc.
@@ -199,6 +205,12 @@ distributech/
 - **Revendeurs** : `revendeur_id`, `revendeur_name`, `region_id`
 - **Régions** : `region_id`, `region_name`
 - **Produits** : `product_id`, `product_name`, `cout_unitaire`
+
+---
+
+## 📜 Licence
+
+Ce projet est sous licence **MIT** – voir le fichier [LICENCE.md](LICENCE.md) pour plus de détails.
 
 ---
 
