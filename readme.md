@@ -10,13 +10,16 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 [Notion](https://www.notion.so/ba8a83033c684aa798eb9e7c6e2e2ed6).
 
 ---
-![Python 3.12](https://img.shields.io/badge/Python-3.12%2B-yellow?logo=python&logoColor=white)
-![Ubuntu 24](https://img.shields.io/badge/Ubuntu-24.04-E95420?logo=ubuntu&logoColor=white)
+![Python 3.12](https://img.shields.io/badge/Python-3.12%2B-yellow?logo=python&logoColor=yellow)
+![Pandas](https://img.shields.io/badge/Pandas-2.3-150458?logo=pandas&logoColor=white)
+![pytest](https://img.shields.io/badge/pytest-8.2-0A9EDC?logo=pytest&logoColor=white)
+![Ubuntu 24](https://img.shields.io/badge/Ubuntu-24.04-E95420?logo=ubuntu&logoColor=E95420)
 ![SQLite 3.4](https://img.shields.io/badge/SQLite-3.4-pink?logo=sqlite&logoColor=003B57)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?logo=mysql&logoColor=white)
-![Pandas](https://img.shields.io/badge/Pandas-2.3-150458?logo=pandas&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-V27-2496ED?logo=docker&logoColor=white)
-![VSCode](https://img.shields.io/badge/VSCode-1.10-007ACC?logo=visualstudiocode&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-V27-2496ED?logo=docker&logoColor=2496ED)
+![VSCode](https://img.shields.io/badge/VSCode-1.10-007ACC?logo=visualstudiocode&logoColor=007ACC)
+
+![tests](https://img.shields.io/badge/coverage-89%-green?logo=pytest&logoColor=white&style=for-the-badge)
 
 
 ## 🧾 Objectif pédagogique
@@ -80,7 +83,7 @@ Ce projet est réalisé en trinôme, les contributeurs sont :
 ### 3. Création du fichier d'environnement et de la base de données
 
 Un fichier contenant les données d'environnement de votre BDD est nécessaire à la racine du projet.
-Créer et personnalisez le fichier `.env` selon ce schéma :
+Créer et personnalisez le fichier `.env` selon ce schéma ou copier/renommer le fichier `env.template`:
 
 ```bash
 BDD_HOST=votre-adresse-host (localhost)
@@ -122,6 +125,9 @@ docker-compose up -d
 ---
 
 ## 🧬 Pipeline ETL
+
+-Schéma
+![Schéma du pipeline ETL](schema_etl_pipe.png)
 
 ### 📤 Extract
 - Chargement des **commandes revendeurs** depuis un ou plusieurs fichiers `.csv` au format :
@@ -186,6 +192,7 @@ distributech/
 │   └── test_xxxx.py         # Scripts de tests unitaires pour l'ensemble des fonctions
 ├── requirements.txt         # Dépendances Python
 ├── README.md                # Ce fichier 😄
+├── env.template             # template du .env à personnaliser
 ├── pytest.ini, .coveragerc  # Fichiers de configuration de l'outil pytest      
 └── .gitignore               # Liste des répertoires ou fichiers non suivis
 ```
@@ -205,17 +212,21 @@ distributech/
 ## ✅ Livrables attendus
 
 - Scripts Python du pipeline ETL (`etl.py`) et annexes (`/scripts/`)
-- Fichier SQL (`schema.sql`) pour initialiser la base
+- Fichier SQL (`script.sql`) pour initialiser la base
 - Fichier `.csv` généré de l’état des stocks à date
 - Documentation fonctionnelle (ce `README.md`)
 
 ---
 
+## 📜 Licence
+
+Ce projet est sous licence **MIT** – voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
 ## 📌 À venir
 
 - Factorisation et sécurisation
-- try/except affinés
-- Tests de robustesse sur les étapes `Transform`
+- Tests de robustesse sur les différentes étapes ETL
+- Affiner les vues BDD selon les exigences métier
 
 ---
 
