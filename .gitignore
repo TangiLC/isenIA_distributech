@@ -1,4 +1,5 @@
 /.venv
+/.vscode
 /bdd/db
 /output_csv
 /scripts/__pycache__
