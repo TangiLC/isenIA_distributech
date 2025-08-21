@@ -52,8 +52,8 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 
 ---
 
-<a id="objectif"></a>
-## [ 🛠️ Fonctionnalités](#fonction)
+<a id="fonction"></a>
+## [ 🛠️ Fonctionnalités](#fonctionalités)
 
 - Intégration automatisée des commandes et stocks dans une base MySQL.
 - Validation et nettoyage des données (formats, doublons, cohérence).
