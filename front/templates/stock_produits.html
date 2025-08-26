@@ -1,0 +1,67 @@
+{# templates/stocks.html #}
+{% extends "base.html" %}
+
+{% block title %}Stock par Produit{% endblock %}
+
+{% block content %}
+<h1>Stock par Produit</h1>
+
+<form method="get" action="">
+    <label for="produit">Choisir un produit</label>
+    <select id="produit" name="product_id" class="form-select" required>
+        <option value="0" selected>tous les produits</option>
+        {% for p in produits %}
+        <option value="{{ p.id }}">{{ p.id }} — {{ p.name }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<table id="products-table" class="table table-info">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>quantity</th>
+            <th>movement</th>
+            <th>operator</th>
+            <th>date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in produits %}
+        <tr data-id="{{ p.id }}" class="table-row">
+            <td>{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.quantity }}</td>
+            <td class="{{ 'negatif' if p.movement < 0 else '' }}">{{ p.movement }}</td>
+            <td>{{ p.operator }}</td>
+            <td>{{ p.date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const select = document.getElementById('produit');
+        const rows = Array.from(document.querySelectorAll('#products-table .table-row'));
+
+        function applyFilter() {
+            const val = select.value;
+            rows.forEach(tr => {
+                if (val == 0) { tr.classList.toggle('invisible', false); }
+                else {
+                    const match = !val || tr.dataset.id === val;
+                    tr.classList.toggle('invisible', !match);
+                }
+            });
+        }
+
+        select.addEventListener('change', applyFilter);
+        applyFilter();
+    });
+</script>
+{% endblock %}

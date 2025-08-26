@@ -2,7 +2,7 @@
 
 ## 🎓 Présentation
 
-Ce projet est un **Proof of Concept (PoC)** académique développé dans le cadre du module *Extraction, Transformation, Chargement (ETL)* de la formation **Développeur IA** ISEN / Simplon.co.
+Ce projet est un **Proof of Concept (PoC)** académique développé dans le cadre du module _Extraction, Transformation, Chargement (ETL)_ de la formation **Développeur IA** ISEN / Simplon.co.
 
 Il a pour but de concevoir un pipeline **ETL automatisé en Python**, permettant l'intégration des données de commandes revendeurs (au format CSV) et de stocks/production (via une base SQLite), dans une **base de données MySQL centralisée**. L'aboutissement du pipeline est la mise à jour de la base stock, avec création de fichiers csv pour le suivi des stocks par produits et par revendeur. Le tout est actuellement **sans interface graphique**, en interaction terminal uniquement.
 
@@ -10,6 +10,7 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 [Notion](https://www.notion.so/ba8a83033c684aa798eb9e7c6e2e2ed6).
 
 ---
+
 ![Python 3.12](https://img.shields.io/badge/Python-3.12%2B-yellow?logo=python&logoColor=yellow)
 ![Pandas](https://img.shields.io/badge/Pandas-2.3-150458?logo=pandas&logoColor=white)
 ![pytest](https://img.shields.io/badge/pytest-8.2-0A9EDC?logo=pytest&logoColor=white)
@@ -20,7 +21,6 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 ![VSCode](https://img.shields.io/badge/VSCode-1.10-007ACC?logo=visualstudiocode&logoColor=007ACC)
 
 ![tests](https://img.shields.io/badge/coverage-89%-green?logo=pytest&logoColor=white&style=for-the-badge)
-
 
 ## 🧾 Objectif pédagogique
 
@@ -36,20 +36,19 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 
 ## 🧑‍💻 Stack technique
 
-| Outil / Techno         | Version / Remarques                        |
-|------------------------|--------------------------------------------|
-| Python                 | ≥ 3.12                                     |
-| Pandas                 | 2.3 Manipulation de données structurées    |
-| mysql-connector        | 9.3 Bibliothèque d'interaction avec MySQL  |
-| python-dotenv          | chargement des variables d'environnement   |
-| pytest (et pytest-cov) | Bibliothèques de test et couverture        |
+| Outil / Techno          | Version / Remarques                         |
+| ----------------------- | ------------------------------------------- |
+| Python                  | ≥ 3.12                                      |
+| Pandas                  | 2.3 Manipulation de données structurées     |
+| mysql-connector         | 9.3 Bibliothèque d'interaction avec MySQL   |
+| python-dotenv           | chargement des variables d'environnement    |
+| pytest (et pytest-cov)  | Bibliothèques de test et couverture         |
 | Docker / Docker Compose | Conteneurisation de la base MySQL + Adminer |
-| MySQL                  | 8.0+ BDD relationnelle (Port 3307)         |
-| Adminer                | Interface web pour MySQL (Port 8081)       |
-| SQLite                 | Base légère Stock source                   |
-| CSV                    | Fichier Commandes des revendeur            |
-| VSCode                 | IDE de développement local                 |
-
+| MySQL                   | 8.0+ BDD relationnelle (Port 3307)          |
+| Adminer                 | Interface web pour MySQL (Port 8081)        |
+| SQLite                  | Base légère Stock source                    |
+| CSV                     | Fichier Commandes des revendeur             |
+| VSCode                  | IDE de développement local                  |
 
 ---
 
@@ -70,14 +69,14 @@ cd etl
 
 Ce projet est réalisé en trinôme, les contributeurs sont :
 
-*Carole* <a href="https://github.com/Carole-N" target="_blank">
-  <img src="https://avatars.githubusercontent.com/Carole-N" width="50" height="50" style="border-radius: 50%;" alt="CaroleN" />
+_Carole_ <a href="https://github.com/Carole-N" target="_blank">
+<img src="https://avatars.githubusercontent.com/Carole-N" width="50" height="50" style="border-radius: 50%;" alt="CaroleN" />
 </a>
-*Gosia* <a href="https://github.com/go2375" target="_blank">
-  <img src="https://avatars.githubusercontent.com/go2375" width="50" height="50" style="border-radius: 50%;" alt="Gosia" />
+_Gosia_ <a href="https://github.com/go2375" target="_blank">
+<img src="https://avatars.githubusercontent.com/go2375" width="50" height="50" style="border-radius: 50%;" alt="Gosia" />
 </a>
-*Tangi* <a href="https://github.com/TangiLC" target="_blank">
-  <img src="https://avatars.githubusercontent.com/TangiLC" width="50" height="50" style="border-radius: 50%;" alt="TangiLC" />
+_Tangi_ <a href="https://github.com/TangiLC" target="_blank">
+<img src="https://avatars.githubusercontent.com/TangiLC" width="50" height="50" style="border-radius: 50%;" alt="TangiLC" />
 </a>
 
 ### 3. Création du fichier d'environnement et de la base de données
@@ -120,7 +119,7 @@ docker-compose up -d
 > 📌 La base **MySQL** sera alors accessible sur le port `3307`  
 > 🖥 L'interface **Adminer** est disponible via [http://localhost:8081](http://localhost:8081)
 
- Lancer les scripts d'initialisation depuis l'interface Adminer.
+Lancer les scripts d'initialisation depuis l'interface Adminer.
 
 ---
 
@@ -130,6 +129,7 @@ docker-compose up -d
 ![Schéma du pipeline ETL](schema_etl_pipe.png)
 
 ### 📤 Extract
+
 - Chargement des **commandes revendeurs** depuis un ou plusieurs fichiers `.csv` au format :
 
 ```
@@ -142,11 +142,13 @@ numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_pr
   - Stock actuel
 
 ### 🧹 Transform
+
 - Validation des données (formats de date, types, cohérence produit/revendeur)
 - Nettoyage des doublons
 - Normalisation (majuscule/minuscule, encodage, etc.)
 
 ### 📥 Load
+
 - Mise à jour de la base MySQL cible via `mysql-connector-python`
 - Génération des fichiers `.csv` récapitulatif de l’état des stocks à date
 - Déplacement des fichiers sources traités
@@ -155,7 +157,7 @@ numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_pr
 
 ## ✓✓ Tests unitaires (pytest)
 
-Les bibliothèques *pytest* et *pytest-cov* est configurée avec pytest.ini et .coveragerc.
+Les bibliothèques _pytest_ et _pytest-cov_ est configurée avec pytest.ini et .coveragerc.
 Les tests sont à lancer à la racine du projet avec la commande suivante :
 
 ```
@@ -193,7 +195,7 @@ distributech/
 ├── requirements.txt         # Dépendances Python
 ├── README.md                # Ce fichier 😄
 ├── env.template             # template du .env à personnaliser
-├── pytest.ini, .coveragerc  # Fichiers de configuration de l'outil pytest      
+├── pytest.ini, .coveragerc  # Fichiers de configuration de l'outil pytest
 └── .gitignore               # Liste des répertoires ou fichiers non suivis
 ```
 
@@ -212,9 +214,10 @@ distributech/
 ## ✅ Livrables attendus
 
 - Scripts Python du pipeline ETL (`etl.py`) et annexes (`/scripts/`)
-- Fichier SQL (`script.sql`) pour initialiser la base
-- Fichier `.csv` généré de l’état des stocks à date
+- Fichier SQL ([script.sql](./bdd/script.sql)) pour initialiser la base, et fichier de population ([populate_init.sql](./bdd/populate_init.sql))
+- Fichier `.csv` généré de l’état des stocks à date dans un dossier `/exports`
 - Documentation fonctionnelle (ce `README.md`)
+- Cahier des charges ([fichier cdc.md](./cdc.md))
 
 ---
 
