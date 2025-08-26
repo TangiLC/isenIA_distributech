@@ -1,6 +1,6 @@
 # Cahier des charges techniques
 
-# 📚 Table des matières
+## 📚 Table des matières
 
 - [1️⃣ Vision produit](#vision)
 - [2️⃣ User Stories](#userstories)
