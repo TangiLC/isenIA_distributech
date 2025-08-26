@@ -1,5 +1,18 @@
 # Cahier des charges techniques
 
+# 📚 Table des matières
+
+- [1️⃣ Vision produit](#vision)
+- [2️⃣ User Stories](#userstories)
+- [3️⃣ Rédaction itérative](#iterative)
+- [4️⃣ Spécifications techniques](#spec)
+- [5️⃣ KPI & critères d’acceptation](#kpi)
+- [6️⃣ Organisation agile du projet](#agile)
+- [7️⃣ Points de vigilance IA](#risks)
+
+---
+
+<a id="vision"></a>
 ## 1️⃣ Vision produit
 
 **Objectif :** Cadrer rapidement le sens du projet IA
@@ -22,6 +35,7 @@ Cette architecture simple, robuste, évolutive et maîtrisable par les équipes 
 
 ---
 
+<a id="userstories"></a>
 ## 2️⃣ User Stories
 
 **Objectif :** Traduire les besoins en fonctionnalités concrètes
@@ -65,6 +79,7 @@ Critères d’acceptation mesurables :
 
 ---
 
+<a id="iterative"></a>
 ## 3️⃣ Rédaction itérative
 
 **Objectif :** Permettre l’évolution naturelle du projet
@@ -88,6 +103,7 @@ Les enseignements tirés du POC (validation des sources et du pipeline), du MVP 
 
 ---
 
+<a id="spec"></a>
 ## 4️⃣ Spécifications techniques
 
 **Objectif :** Poser les bases technologiques sans figer
@@ -112,6 +128,7 @@ Les enseignements tirés du POC (validation des sources et du pipeline), du MVP 
 
 ---
 
+<a id="kpi"></a>
 ## 5️⃣ KPI & critères d’acceptation
 
 **Objectif :** Valider la qualité et l’utilité des livrables
@@ -151,6 +168,7 @@ User Story no. 3 KPIs:
 
 ---
 
+<a id="agile"></a>
 ## 6️⃣ Organisation agile du projet
 
 **Objectif :** Structurer l’avancement en mode collaboratif
@@ -173,6 +191,7 @@ User Story no. 3 KPIs:
 
 ---
 
+<a id="risks"></a>
 ## 7️⃣ Points de vigilance IA
 
 **Objectif :** Anticiper les pièges spécifiques aux projets IA
