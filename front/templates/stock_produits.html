@@ -1,50 +1,194 @@
 {# templates/stocks.html #}
 {% extends "base.html" %}
-
-{% block title %}Stock par Produit{% endblock %}
-
+{% block title %}Stock par Produit
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+{% endblock %}
 {% block content %}
 <h1>Stock par Produit</h1>
-
 <form method="get" action="">
     <label for="produit">Choisir un produit</label>
     <select id="produit" name="product_id" class="form-select" required>
         <option value="0" selected>tous les produits</option>
         {% for p in produits %}
-        <option value="{{ p.id }}">{{ p.id }} — {{ p.name }}</option>
+        <option value="{{ p.id }}">({{ p.id }}) {{ p.name }}</option>
         {% endfor %}
     </select>
 </form>
-
 <table id="products-table" class="table table-info">
     <thead>
         <tr>
+            <th>visuel</th>
             <th>id</th>
             <th>name</th>
             <th>quantity</th>
             <th>movement</th>
             <th>operator</th>
             <th>date</th>
+            <th>graphique</th>
         </tr>
     </thead>
     <tbody>
         {% for p in produits %}
         <tr data-id="{{ p.id }}" class="table-row">
+            <td class="visuel"><img src="{{ url_for('static', filename='assets/' ~ p.id ~ '.png') }}"
+                    alt="{{ p.name }}">
+            </td>
             <td>{{ p.id }}</td>
             <td>{{ p.name }}</td>
-            <td>{{ p.quantity }}</td>
-            <td class="{{ 'negatif' if p.movement < 0 else '' }}">{{ p.movement }}</td>
-            <td>{{ p.operator }}</td>
-            <td>{{ p.date }}</td>
+            <td>{{ p.final_stock.quantity }}</td>
+            <td class="{{ 'negatif' if p.last_movements[-1].movement < 0 else '' }}">
+                {{ p.last_movements[-1].movement }}
+            </td>
+            <td>{{ p.last_movements[-1].operator }}</td>
+            <td>{{ p.last_movements[-1].date }}</td>
+            <td><button onclick="showChart('{{ p.id }}')" class="btn btn-sm btn-primary">Voir graphique</button></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<div class="graph-container mt-4">
+    {% for p in produits %}
+    <div id="chart-container-{{ p.id }}" class="chart-box mb-4" style="display: none;">
+        <div class="d-flex flex-column flex-lg-row">
+            <div class="w-100 w-lg-50 p-3">
+                <h4>{{ p.name }} - Évolution du Stock</h4>
+                <div class="date-qty-container">
+                    <div><i class="bi bi-calendar3"></i>&nbsp;{{ p.last_movements[-1].date }}</div>
+                    <div><i class="bi bi-list-check"></i>&nbsp;{{ p.final_stock.quantity }} item{{
+                        's' if p.final_stock.quantity >
+                        1 else '' }} en stock</div>
+                </div>
+                <img src="{{ url_for('static', filename='assets/' ~ p.id ~ '.png') }}" alt="{{ p.name }}"
+                    class="img-fluid">
+            </div>
+            <div class="w-100 w-lg-50 p-3">
+                <div style="height: 400px;">
+                    <canvas id="chart-{{ p.id }}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
+    // Données des produits injectées depuis Python
+    const produitsData = {{ produits| tojson | safe }};
+    const charts = {};
+
+    function calculateHistoricalQuantities(product) {
+        const movements = product.last_movements;
+        const finalQuantity = product.final_stock.quantity;
+
+        if (movements.length === 0) return [];
+
+        const quantities = [];
+        let currentQuantity = finalQuantity;
+
+        for (let i = movements.length - 1; i >= 0; i--) {
+            quantities.unshift(currentQuantity);
+            if (i > 0) {
+                currentQuantity -= movements[i].movement;
+            }
+        }
+        return quantities;
+    }
+
+    function createChart(product) {
+        const canvasId = `chart-${product.id}`;
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        const movements = product.last_movements;
+        const quantities = calculateHistoricalQuantities(product);
+
+        const dates = movements.map(m => {
+            const date = new Date(m.date);
+            return date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+        });
+
+        if (charts[product.id]) {
+            charts[product.id].destroy();
+        }
+
+        charts[product.id] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Quantité en stock',
+                    data: quantities,
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1,
+                    pointBackgroundColor: 'rgb(75, 192, 192)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: function (context) {
+                                const movement = movements[context.dataIndex];
+                                return [
+                                    `Opérateur: ${movement.operator}`,
+                                    `Mouvement: ${movement.movement > 0 ? '+' : ''}${movement.movement}`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Quantité'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function showChart(productId) {
+
+        document.querySelectorAll('.chart-box').forEach(box => {
+            box.style.display = 'none';
+        });
+
+        const chartContainer = document.getElementById(`chart-container-${productId}`);
+        chartContainer.style.display = 'flex';
+
+        const product = produitsData.find(p => p.id === productId);
+        if (product && !charts[productId]) {
+            createChart(product);
+        }
+
+        chartContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const select = document.getElementById('produit');
         const rows = Array.from(document.querySelectorAll('#products-table .table-row'));
@@ -52,11 +196,17 @@
         function applyFilter() {
             const val = select.value;
             rows.forEach(tr => {
-                if (val == 0) { tr.classList.toggle('invisible', false); }
+                if (val == 0) {
+                    tr.classList.toggle('invisible', false);
+                }
                 else {
                     const match = !val || tr.dataset.id === val;
                     tr.classList.toggle('invisible', !match);
                 }
+            });
+
+            document.querySelectorAll('.chart-box').forEach(box => {
+                box.style.display = 'none';
             });
         }
 

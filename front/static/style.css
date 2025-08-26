@@ -12,3 +12,26 @@ h1 {
 .negatif {
 	color: red;
 }
+
+.visuel {
+	padding: 0px !important;
+	img {
+		width: 4rem;
+	}
+}
+
+.chart-view img {
+	width: 90%;
+	margin: auto;
+}
+
+h4 {
+	text-align: center;
+}
+
+.date-qty-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	font-size: 1.3rem;
+}

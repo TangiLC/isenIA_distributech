@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    produits = data.get_product_last_stock()
+    produits = data.get_products_3_last_movements()
     print("recupération ds produits", len(produits))
     return render_template("stock_produits.html", produits=produits)
 
