@@ -266,9 +266,11 @@ distributech/
 ## [ ✅ Livrables attendus](#livrables-attendus)
 
 - Scripts Python du pipeline ETL (`etl.py`) et annexes (`/scripts/`)
-- Fichier SQL (`script.sql`) pour initialiser la base
-- Fichier `.csv` généré de l’état des stocks à date
+- Fichier SQL pour initialiser la base [script.sql](./bdd/script.sql) et population [populate.sql](./bdd/populate_init.sql)
+- Fichier `.csv` généré de l’état des stocks à date [exports](./exports/)
 - Documentation fonctionnelle (ce `README.md`)
+- Cahier des charges fonctionnel [cdc](./documentation/ditributech_cdc.pdf)
+- Cahier des charges technique [cdc_t](./documentation/distributech_cdc_t.pdf)
 
 ---
 
