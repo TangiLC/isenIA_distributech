@@ -21,10 +21,10 @@
         <tr>
             <th>visuel</th>
             <th>id</th>
-            <th>name</th>
-            <th>quantity</th>
-            <th>movement</th>
-            <th>operator</th>
+            <th>dénomination</th>
+            <th>quantité</th>
+            <th>mouvement</th>
+            <th>operateur</th>
             <th>date</th>
             <th>graphique</th>
         </tr>
@@ -43,7 +43,7 @@
             </td>
             <td>{{ p.last_movements[-1].operator }}</td>
             <td>{{ p.last_movements[-1].date }}</td>
-            <td><button onclick="showChart('{{ p.id }}')" class="btn btn-sm btn-primary">Voir graphique</button></td>
+            <td><button onclick="showChart({{ p.id }})" class="btn btn-sm btn-primary">Voir graphique</button></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -57,7 +57,7 @@
                 <h4>{{ p.name }} - Évolution du Stock</h4>
                 <div class="date-qty-container">
                     <div><i class="bi bi-calendar3"></i>&nbsp;{{ p.last_movements[-1].date }}</div>
-                    <div><i class="bi bi-list-check"></i>&nbsp;{{ p.final_stock.quantity }} item{{
+                    <div><i class="bi bi-list-check"></i>&nbsp;<b>{{ p.final_stock.quantity }}</b> item{{
                         's' if p.final_stock.quantity >
                         1 else '' }} en stock</div>
                 </div>
@@ -97,6 +97,7 @@
                 currentQuantity -= movements[i].movement;
             }
         }
+
         return quantities;
     }
 
@@ -106,11 +107,13 @@
         const movements = product.last_movements;
         const quantities = calculateHistoricalQuantities(product);
 
+        // Extraire les dates et les formater
         const dates = movements.map(m => {
             const date = new Date(m.date);
             return date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
         });
 
+        // Détruire le graphique existant s'il existe
         if (charts[product.id]) {
             charts[product.id].destroy();
         }
@@ -173,19 +176,22 @@
     }
 
     function showChart(productId) {
-
+        // Cacher tous les graphiques
         document.querySelectorAll('.chart-box').forEach(box => {
             box.style.display = 'none';
         });
 
+        // Afficher le graphique demandé
         const chartContainer = document.getElementById(`chart-container-${productId}`);
         chartContainer.style.display = 'flex';
 
+        // Créer le graphique si pas encore créé
         const product = produitsData.find(p => p.id === productId);
         if (product && !charts[productId]) {
             createChart(product);
         }
 
+        // Faire défiler vers le graphique
         chartContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -205,6 +211,7 @@
                 }
             });
 
+            // Cacher tous les graphiques quand on filtre
             document.querySelectorAll('.chart-box').forEach(box => {
                 box.style.display = 'none';
             });
