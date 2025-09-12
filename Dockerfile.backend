@@ -1,0 +1,25 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /dtech
+
+# Dépendances
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+RUN mkdir -p /dtech/data
+
+# Code
+COPY etl.py .
+COPY bdd_init.py .
+COPY scripts/ ./scripts/
+COPY bdd/ ./bdd
+COPY front/ ./front/
+COPY data/ /dtech/data/
+
+#VOLUME ["/dtech/data"]
+
+# Initialisation de la BDD puis garder le container actif
+CMD ["sh", "-c", "python3 bdd_init.py && tail -f /dev/null"]

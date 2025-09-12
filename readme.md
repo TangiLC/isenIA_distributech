@@ -1,26 +1,6 @@
 # 🧪 Projet ETL Python – Suivi des commandes revendeurs
 
-## 📚 Table des matières
-
-- [ 🧾 Présentation](#present)
-- [ 🎓 Objectif pédagogique](#objectif)
-- [ 🛠️ Fonctionnalités](#fonction)
-- [ 💻 Pré-requis](#prereq)
-- [ 🧑‍💻 Stack technique](#stack)
-- [ ⚙️ Installation & mise en route](#install)
-- [ 📝 Guide de développement](#guide)
-- [ 🧬 Pipeline ETL](#pipe)
-- [ ✓✓ Tests unitaires](#tests)
-- [ 🧩 Structure du projet](#struct)
-- [ 📤 Données manipulées](#donn)
-- [ ✅ Livrables attendus](#livr)
-- [ 📜 Licence](#lic)
-- [ 👥 Créateurs](#creat)
-- [ ✅ À venir](#aven)
-
-<a id="present"></a>
-
-## [ 🧾 Présentation](#présentation)
+## 🎓 Présentation
 
 Ce projet est un **Proof of Concept (PoC)** académique développé dans le cadre du module _Extraction, Transformation, Chargement (ETL)_ de la formation **Développeur IA** ISEN / Simplon.co.
 
@@ -40,11 +20,9 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 ![Docker](https://img.shields.io/badge/Docker-V27-2496ED?logo=docker&logoColor=2496ED)
 ![VSCode](https://img.shields.io/badge/VSCode-1.10-007ACC?logo=visualstudiocode&logoColor=007ACC)
 
-![tests](https://img.shields.io/badge/coverage-89%-green?logo=pytest&logoColor=white)
+![tests](https://img.shields.io/badge/coverage-89%-green?logo=pytest&logoColor=white&style=for-the-badge)
 
-<a id="objectif"></a>
-
-## [ 🎓 Objectif pédagogique](#objectif-pédagogique)
+## 🧾 Objectif pédagogique
 
 - Concevoir une base SQL relationnelle orientée gestion logistique (revendeurs, produits, régions, commandes, stocks),
 - Développer un pipeline ETL pour :
@@ -56,30 +34,7 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 
 ---
 
-<a id="fonction"></a>
-
-## [ 🛠️ Fonctionnalités](#fonctionalités)
-
-- Intégration automatisée des commandes et stocks dans une base MySQL.
-- Validation et nettoyage des données (formats, doublons, cohérence).
-- Génération de fichiers CSV récapitulatifs.
-- Architecture modulaire pour faciliter le développement et la maintenance.
-
----
-
-<a id="prereq"></a>
-
-## [ 💻 Pré-requis](#pré-requis)
-
-- Python 3.12+
-- Docker + Docker Compose installés
-- `pip`, `venv` disponibles en ligne de commande
-
----
-
-<a id="stack"></a>
-
-## [ 🧑‍💻 Stack technique](#stack-technique)
+## 🧑‍💻 Stack technique
 
 | Outil / Techno          | Version / Remarques                         |
 | ----------------------- | ------------------------------------------- |
@@ -97,18 +52,34 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 
 ---
 
-<a id="install"></a>
+## ⚙️ Installation & mise en route
 
-## [ ⚙️ Installation & mise en route](#installation--mise-en-route)
+### 1. Pré-requis
 
-### 1. Clonage du dépôt
+- Python 3.12+
+- Docker + Docker Compose installés
+- `pip`, `venv` disponibles en ligne de commande
+
+### 2. Clonage du dépôt
 
 ```bash
 git clone https://github.com/TangiLC/isenIA_distributech.git
 cd etl
 ```
 
-### 2. Création du fichier d'environnement et de la base de données
+Ce projet est réalisé en trinôme, les contributeurs sont :
+
+_Carole_ <a href="https://github.com/Carole-N" target="_blank">
+<img src="https://avatars.githubusercontent.com/Carole-N" width="50" height="50" style="border-radius: 50%;" alt="CaroleN" />
+</a>
+_Gosia_ <a href="https://github.com/go2375" target="_blank">
+<img src="https://avatars.githubusercontent.com/go2375" width="50" height="50" style="border-radius: 50%;" alt="Gosia" />
+</a>
+_Tangi_ <a href="https://github.com/TangiLC" target="_blank">
+<img src="https://avatars.githubusercontent.com/TangiLC" width="50" height="50" style="border-radius: 50%;" alt="TangiLC" />
+</a>
+
+### 3. Création du fichier d'environnement et de la base de données
 
 Un fichier contenant les données d'environnement de votre BDD est nécessaire à la racine du projet.
 Créer et personnalisez le fichier `.env` selon ce schéma ou copier/renommer le fichier `.env.template`:
@@ -116,25 +87,25 @@ Créer et personnalisez le fichier `.env` selon ce schéma ou copier/renommer le
 ```bash
 BDD_HOST=votre-adresse-host (localhost)
 BDD_PORT=votre-port-mysql (3307)
-BDD_USER=votre-nom-user-mysql
-BDD_PASSWORD=votre-mot-de-passe-mysql
-BDD_NAME=votre-nom-de-bdd (distributech)
+MYSQL_USER=votre-nom-user-mysql
+MYSQL_PASSWORD=votre-mot-de-passe-mysql
+MYSQL_DATABASE=votre-nom-de-bdd (distributech)
 ```
 
-### 3. Création de l’environnement virtuel Python
+### 4. Création de l’environnement virtuel Python
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 4. Installation des dépendances
+### 5. Installation des dépendances
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Lancement de la base de données
+### 6. Lancement de la base de données
 
 Les fichiers `bdd/script.sql` et `bdd/populate_init.sql` permettent d'initialiser votre base de données.
 
@@ -152,22 +123,7 @@ Lancer les scripts d'initialisation depuis l'interface Adminer.
 
 ---
 
-<a id="guide"></a>
-
-## [ 📝 Guide de développement](#guide-de-développement)
-
-- Scripts principaux dans scripts/
-- etl.py : script principal pour exécuter le pipeline
-- scripts/extracts.py : extraction des données
-- scripts/transform_xx.py : transformation et nettoyage
-- scripts/loads.py : scripts pour les étapes Load
-- scripts/generate_report.py : génération CSV état stocks
-
----
-
-<a id="pipe"></a>
-
-## [ 🧬 Pipeline ETL](#pipeline-etl)
+## 🧬 Pipeline ETL
 
 -Schéma
 ![Schéma du pipeline ETL](schema_etl_pipe.png)
@@ -199,9 +155,7 @@ numero_commande,commande_date,revendeur_id,region_id,product_id,quantity,unit_pr
 
 ---
 
-<a id="tests"></a>
-
-## [ ✓✓ Tests unitaires](#tests-unitaires)
+## ✓✓ Tests unitaires (pytest)
 
 Les bibliothèques _pytest_ et _pytest-cov_ est configurée avec pytest.ini et .coveragerc.
 Les tests sont à lancer à la racine du projet avec la commande suivante :
@@ -215,9 +169,7 @@ Le rapport se trouve dans `/tests/htmlcov`. (page principale `index.html`)
 
 ---
 
-<a id="struct"></a>
-
-## [ 🧩 Structure du projet](#structure-du-projet)
+## 🗃 Structure du projet
 
 ```
 distributech/
@@ -249,9 +201,7 @@ distributech/
 
 ---
 
-<a id="donn"></a>
-
-## [ 📤 Données manipulées](#données-manipulées)
+## 📤 Données manipulées
 
 - **Commandes** : `numero_commande`, `commande_date`, `revendeur_id`, `region_id`, `product_id`, `quantity`, `unit_price`
 - **Stocks** : mouvements (entrées/sorties), calcul des niveaux à date
@@ -261,48 +211,21 @@ distributech/
 
 ---
 
-<a id="livr"></a>
-
-## [ ✅ Livrables attendus](#livrables-attendus)
+## ✅ Livrables attendus
 
 - Scripts Python du pipeline ETL (`etl.py`) et annexes (`/scripts/`)
-- Fichier SQL pour initialiser la base [script.sql](./bdd/script.sql) et population [populate.sql](./bdd/populate_init.sql)
-- Fichier `.csv` généré de l’état des stocks à date [exports](./exports/)
+- Fichier SQL ([script.sql](./bdd/script.sql)) pour initialiser la base, et fichier de population ([populate_init.sql](./bdd/populate_init.sql))
+- Fichier `.csv` généré de l’état des stocks à date dans un dossier `/exports`
 - Documentation fonctionnelle (ce `README.md`)
-- Cahier des charges fonctionnel [cdc](./documentation/ditributech_cdc.pdf)
-- Cahier des charges technique [cdc_t](./documentation/distributech_cdc_t.pdf)
+- Cahier des charges ([fichier cdc.md](./cdc.md))
 
 ---
 
-<a id="lic"></a>
-
-## [ 📜 Licence](#licence)
+## 📜 Licence
 
 Ce projet est sous licence **MIT** – voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
----
-
-<a id="creat"></a>
-
-## [ 👥 Créateurs](#créateurs)
-
-Ce projet est réalisé en trinôme, les contributeurs sont :
-
-_Carole_ <a href="https://github.com/Carole-N" target="_blank">
-<img src="https://avatars.githubusercontent.com/Carole-N" width="50" height="50" style="border-radius: 50%;" alt="CaroleN" />
-</a>
-_Gosia_ <a href="https://github.com/go2375" target="_blank">
-<img src="https://avatars.githubusercontent.com/go2375" width="50" height="50" style="border-radius: 50%;" alt="Gosia" />
-</a>
-_Tangi_ <a href="https://github.com/TangiLC" target="_blank">
-<img src="https://avatars.githubusercontent.com/TangiLC" width="50" height="50" style="border-radius: 50%;" alt="TangiLC" />
-</a>
-
----
-
-<a id="aven"></a>
-
-## [ ✅ À venir](#à-venir)
+## 📌 À venir
 
 - Factorisation et sécurisation
 - Tests de robustesse sur les différentes étapes ETL

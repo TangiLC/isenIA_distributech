@@ -1,0 +1,14 @@
+<!-- templates/index.html -->
+<!doctype html>
+<html>
+
+<body>
+    <h1>Produits</h1>
+    <ul>
+        {% for p in produits %}
+        <li>{{ p.id }} — {{ p.name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>
