@@ -27,7 +27,7 @@ from scripts.transform_phase1 import (
 # COMMANDE_PATH="data/commande_revendeur_tech_express.csv"
 # COMMANDE_PATH = "data/commande_avec_erreurs.csv"
 # SQLITE_PATH = "data/base_stock.sqlite"
-DATA_PATH = "data/"
+DATA_PATH = "./data/"
 
 
 def main():

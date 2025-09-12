@@ -87,9 +87,9 @@ Créer et personnalisez le fichier `.env` selon ce schéma ou copier/renommer le
 ```bash
 BDD_HOST=votre-adresse-host (localhost)
 BDD_PORT=votre-port-mysql (3307)
-BDD_USER=votre-nom-user-mysql
-BDD_PASSWORD=votre-mot-de-passe-mysql
-BDD_NAME=votre-nom-de-bdd (distributech)
+MYSQL_USER=votre-nom-user-mysql
+MYSQL_PASSWORD=votre-mot-de-passe-mysql
+MYSQL_DATABASE=votre-nom-de-bdd (distributech)
 ```
 
 ### 4. Création de l’environnement virtuel Python

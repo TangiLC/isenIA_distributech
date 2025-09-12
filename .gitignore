@@ -1,6 +1,7 @@
 /.venv
 /.vscode
 /bdd/db
+/db
 /output_csv
 /scripts/__pycache__
 /scripts/utils/__pycache__

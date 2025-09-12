@@ -10,13 +10,47 @@ def init_connection():
     Returns:
         connector.connect: le connecteur actif
     """
+
     return mysql.connector.connect(
         host=os.getenv("BDD_HOST"),
         port=os.getenv("BDD_PORT"),
-        user=os.getenv("BDD_USER"),
-        password=os.getenv("BDD_PASSWORD"),
-        database=os.getenv("BDD_NAME"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_ROOT_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE"),
+        autocommit=True,
+        consume_results=True,
     )
+
+
+###############################################################################
+def init_bdd(script_path):
+    try:
+        conn = init_connection()
+        cursor = conn.cursor()
+
+        with open(script_path, "r", encoding="utf-8") as f:
+            sql_script = f.read()
+        sql_commands = [cmd.strip() for cmd in sql_script.split(";") if cmd.strip()]
+
+        for command in sql_commands:
+            if command:
+                cursor.execute(command)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return True
+
+    except mysql.connector.Error as err:
+        print(f"❌ Erreur lors de l'initialisation de la BDD : {err}")
+        return False
+    except FileNotFoundError:
+        print("❌ Fichier script_create.sql non trouvé")
+        return False
+    except Exception as err:
+        print(f"❌ Erreur inattendue : {err}")
+        return False
 
 
 ###############################################################################

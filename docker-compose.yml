@@ -1,0 +1,56 @@
+services:
+  mysql_db:
+    image: mysql
+    container_name: db_dt
+    environment:
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+
+    ports:
+      - 3307:3306
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./bdd:/docker-entrypoint-initdb.d  #execution des scripts sql create/populate
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  adminer:
+    image: adminer
+    container_name: adminer_dt
+    restart: always
+    ports:
+      - 8081:8080
+    depends_on:
+      - mysql_db
+
+  etl:
+    build: 
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: etl_dt
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - BDD_HOST=mysql_db  #Nom du service !
+      - BDD_PORT=3306      #Port interne Network
+    volumes:
+      - etl_data:/dtech/data
+    ports:
+      - 5000:5000
+  
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+    restart: "no"  # Ne pas redémarrer automatiquement
+
+volumes:
+  etl_data:

@@ -9,9 +9,9 @@ def init_connection():
     conn = mysql.connector.connect(
         host=os.getenv("BDD_HOST"),
         port=os.getenv("BDD_PORT"),
-        user=os.getenv("BDD_USER"),
-        password=os.getenv("BDD_PASSWORD"),
-        database=os.getenv("BDD_NAME"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        database=os.getenv("MYSQL_DATABASE"),
     )
     if conn.is_connected():
         print("[ok] connexion à la base réussie")

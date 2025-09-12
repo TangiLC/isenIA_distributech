@@ -78,19 +78,6 @@ CREATE TABLE IF NOT EXISTS stock (
     FOREIGN KEY (product_id) REFERENCES produit(product_id)
 );
 
--- INDEXES pour optimiser les requêtes
-CREATE INDEX idx_revendeur_region ON revendeur(region_id);
-CREATE INDEX idx_production_log ON production(log_id);
-CREATE INDEX idx_commande_log ON commande(log_id);
-CREATE INDEX idx_commande_revendeur ON commande(revendeur_id);
-CREATE INDEX idx_production_produit_pid ON production_produit(production_id);
-CREATE INDEX idx_production_produit_produit ON production_produit(product_id);
-CREATE INDEX idx_commande_produit_commande ON commande_produit(commande_id);
-CREATE INDEX idx_commande_produit_produit ON commande_produit(product_id);
-CREATE INDEX idx_stock_product ON stock(product_id);
-CREATE INDEX idx_production_date ON production(date_production);
-CREATE INDEX idx_commande_date ON commande(commande_date);
-CREATE INDEX idx_stock_date ON stock(stock_date);
 
 -- VERIFICATION que les tables de base existent
 SELECT table_name 
@@ -98,7 +85,7 @@ FROM information_schema.tables
 WHERE table_schema = 'distributech'
   AND table_name IN ('stock', 'produit', 'revendeur', 'region');
 
----- CREATION VIEW : une vue du stock final par produit et une vue du stock final par revendeur
+-- CREATION VIEW : une vue du stock final par produit et une vue du stock final par revendeur
 -- Une vue du stock final par produit
 
 CREATE OR REPLACE VIEW vue_stock_final_produit AS
