@@ -17,6 +17,7 @@ Le développement de ce projet a suivi une méthodologie Agile, avec ticketing e
 ![Ubuntu 24](https://img.shields.io/badge/Ubuntu-24.04-E95420?logo=ubuntu&logoColor=E95420)
 ![SQLite 3.4](https://img.shields.io/badge/SQLite-3.4-pink?logo=sqlite&logoColor=003B57)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?logo=mysql&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-v3-000000?logo=flask&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-V27-2496ED?logo=docker&logoColor=2496ED)
 ![VSCode](https://img.shields.io/badge/VSCode-1.10-007ACC?logo=visualstudiocode&logoColor=007ACC)
 
